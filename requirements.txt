@@ -51,3 +51,6 @@ pandas
 plotly
 openpyxl
 xlsxwriter
+pymysql
+flask
+mysql-connector-python
