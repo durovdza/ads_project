@@ -161,3 +161,5 @@ cython_debug/
 
 # Config
 DS_project/config/config_mysql_credentials.json
+config/config_mysql_credentials.json
+config/config_openai_api.json

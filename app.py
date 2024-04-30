@@ -58,10 +58,8 @@ def run_set_up_script():
     except subprocess.CalledProcessError:
         print("Fehler beim Ausführen des Set-up-Skripts.")
 
-def main():
+
+if __name__ == '__main__':
     run_set_up_script()
     # Start der Flask-App
     app.run(debug=False)
-
-if __name__ == '__main__':
-    main()
