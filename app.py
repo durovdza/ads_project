@@ -1,8 +1,9 @@
 from flask import Flask, render_template
 import subprocess
 import sys
+import os
 
-app = Flask(__name__, template_folder='src/frontend/templates')
+app = Flask(__name__, template_folder=os.path.join("src", "frontend", "templates"))
 
 
 @app.route('/')
@@ -53,13 +54,20 @@ def schlussfolgerungen():
 
 def run_set_up_script():
     try:
-        subprocess.check_call([sys.executable, 'src/scripts/set_up/set_up.py'])
+        subprocess.check_call([sys.executable, os.path.join('src', 'scripts', 'set_up', 'set_up.py')])
         print("Set-up erfolgreich abgeschlossen.")
     except subprocess.CalledProcessError:
         print("Fehler beim Ausführen des Set-up-Skripts.")
 
+def run_script(path):
+    try:
+        subprocess.check_call([sys.executable, path])
+        print("Skript " + path + " erfolgreich abgeschlossen.")
+    except subprocess.CalledProcessError:
+        print("Fehler beim Ausführen des Skripts " + path)
 
 if __name__ == '__main__':
     run_set_up_script()
+    run_script(os.path.join('src', 'scripts', 'data_preparation', 'data_preparation.py'))
     # Start der Flask-App
     app.run(debug=False)

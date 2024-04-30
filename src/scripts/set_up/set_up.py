@@ -1,3 +1,4 @@
+import os
 import json
 
 def get_mysql_credentials_from_user():
@@ -15,13 +16,14 @@ def get_mysql_credentials_from_user():
         "database": database
     }
     
-    with open('config\config_mysql_credentials.json', 'r') as f:
+    file_path = os.path.join("config", "config_mysql_credentials.json")
+    with open(file_path, 'r') as f:
         template = json.load(f)
     
     # Ersetze Platzhalter in der Vorlage durch Benutzereingaben
     template.update(credentials)
     
-    with open('config\config_mysql_credentials.json', 'w') as f:
+    with open(file_path, 'w') as f:
         json.dump(template, f, indent=4)  # Schreibe die aktualisierten Daten zurück in die JSON-Datei
 
 def get_openai_api_key_from_user():
@@ -33,10 +35,10 @@ def get_openai_api_key_from_user():
         "api_key": api_key
     }
     
-    with open('config\config_openai_api.json', 'w') as f:
+    file_path = os.path.join("config", "config_openai_api.json")
+    with open(file_path, 'w') as f:
         json.dump(data, f, indent=4)
 
 if __name__ == '__main__':
-
     get_mysql_credentials_from_user()
     get_openai_api_key_from_user()

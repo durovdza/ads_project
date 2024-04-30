@@ -2,9 +2,25 @@ import requests
 import pandas as pd
 import mysql.connector
 from mysql.connector import Error
-from scripts.data_collection.data_collection import collect_data
 import json
+import os
 
+def collect_data():
+    file_path = os.path.join("config", "config_data_sources.json")
+    
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        
+    collected_data = {}
+    for source, info in data.items():
+        url = info['url']
+        response = requests.get(url)
+        if response.status_code == 200:
+            collected_data[source] = response.json()
+        else:
+            print(f"Fehler beim Abrufen der Daten von {source}: {response.status_code}")
+    
+    return collected_data
 
 # Funktion zum Entfernen von NaN-Werten und Duplikaten sowie zur Datenaufbereitung
 def clean_and_process_data(data):
@@ -95,8 +111,11 @@ def read_mysql_credentials(file_path):
 
 # Funktion zum Sammeln von Daten, Aufbereiten und Speichern in der Datenbank
 def collect_data_and_store():
+    # Pfad zur JSON-Datei für die MySQL-Verbindungsinformationen
+    mysql_credentials_file = os.path.join("config", "config_mysql_credentials.json")
+
     # MySQL-Verbindungsinformationen aus JSON-Datei lesen
-    host, port, user, password, database = read_mysql_credentials('ADS_project\\config\\config_mysql_credentials.json')
+    host, port, user, password, database = read_mysql_credentials(mysql_credentials_file)
     try:
         if host and port and user and password and database:
             # Verbindung zur MySQL-Datenbank herstellen
