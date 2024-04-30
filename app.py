@@ -62,7 +62,7 @@ def run_set_up_script():
 def main():
     run_set_up_script()
     # Start der Flask-App
-    app.run(debug=True)
+    app.run(debug=False)
 
 if __name__ == '__main__':
     main()
