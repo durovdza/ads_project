@@ -43,4 +43,4 @@ source venv/bin/activate # For Unix or Linux systems
 pip install -r requirements.txt
 
 # Run the local development server or script (specify the script if it's not 'app.py')
-flask run
+python app.py
