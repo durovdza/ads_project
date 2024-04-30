@@ -96,7 +96,7 @@ def read_mysql_credentials(file_path):
 # Funktion zum Sammeln von Daten, Aufbereiten und Speichern in der Datenbank
 def collect_data_and_store():
     # MySQL-Verbindungsinformationen aus JSON-Datei lesen
-    host, port, user, password, database = read_mysql_credentials('DS_project\\config\\config_mysql_credentials.json')
+    host, port, user, password, database = read_mysql_credentials('ADS_project\\config\\config_mysql_credentials.json')
     try:
         if host and port and user and password and database:
             # Verbindung zur MySQL-Datenbank herstellen
@@ -127,3 +127,7 @@ def collect_data_and_store():
         if connection.is_connected():
             connection.close()
             print("MySQL-Verbindung geschlossen")
+
+if __name__ == '__main__':
+    # Daten sammeln, aufbereiten und in die Datenbank einfüge
+    collect_data_and_store()

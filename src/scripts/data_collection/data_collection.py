@@ -3,7 +3,7 @@ import json
 import os
 
 def collect_data():
-    file_path = os.path.join("DS_project", "config", "config_data_sources.json")
+    file_path = os.path.join("ADS_project", "config", "config_data_sources.json")
     
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
