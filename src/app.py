@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 from scripts.data_collection.data_collection import collect_data
 from scripts.data_preparation.data_preparation import clean_and_process_data, collect_data_and_store
+import subprocess
+import sys
 
 app = Flask(__name__, template_folder='frontend/templates')
 
@@ -52,7 +54,15 @@ def diskussion_ergebnisse():
 def schlussfolgerungen():
     return render_template('schlussfolgerungen.html')
 
+def run_set_up_script():
+    try:
+        subprocess.check_call([sys.executable, 'src/scripts/set_up/set_up.py'])
+        print("Set-up erfolgreich abgeschlossen.")
+    except subprocess.CalledProcessError:
+        print("Fehler beim Ausführen des Set-up-Skripts.")
+
 def main():
+    run_set_up_script()
     # Daten sammeln, aufbereiten und in die Datenbank einfüge
     collect_data_and_store()
     # Start der Flask-App
