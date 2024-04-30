@@ -28,12 +28,6 @@ Here's how you can set up your development environment:
 # Clone the repository
 git clone https://github.com/durovdza/ads_project
 
-# Create a API key from chat gpt on their website and replace "YOUR KEY" with your key. After that, create a '.env' file in the 'OpenDataHack2023' directory with the following content
-echo OPENAI_API_KEY="YOUR KEY" >> .env
-
-# Insert your Database Credentials in the file "mysql_credentials.txt"
-In order to get these information, you have to connect to your database in MySQL Workbench and go to Database / Manage Connections...
-
 # Navigate to the project directory
 cd ads_project
 
