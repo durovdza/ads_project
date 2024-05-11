@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./DS_project:/app/DS_project
+    environment:
+      MYSQL_CREDENTIALS_FILE: /app/DS_project\config\mysql_credentials.txt
+    depends_on:
+      - db
+
+  db:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      MYSQL_DATABASE: ads
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
+    secrets:
+      - mysql_root_password
+
+secrets:
+  mysql_root_password:
+    file: ./DS_project\config\mysql_credentials.txt

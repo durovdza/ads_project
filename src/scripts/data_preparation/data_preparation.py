@@ -24,49 +24,59 @@ def collect_data():
 
 # Funktion zum Entfernen von NaN-Werten und Duplikaten sowie zur Datenaufbereitung
 def clean_and_process_data(data):
+    cleaned_data = {}
+
     if data is not None:
-        # Lade die JSON-Daten und überprüfe, ob die Spalteninformationen vorhanden sind
-        try:
-            columns = data["abstimmungsresultate"]["columns"]
-        except KeyError:
-            print("Spalteninformationen nicht gefunden.")
-            return None
-        
-        # Extrahiere die Spaltennamen aus den Spalteninformationen
-        column_names = [column["name"] for column in columns]
+        # Iteriere über alle Datenquellen
+        for source, info in data.items():
+            # Erstelle ein leeres DataFrame für jede Datenquelle
+            df = pd.DataFrame()
 
-        # Erstelle ein leeres DataFrame mit den extrahierten Spaltennamen
-        df = pd.DataFrame(columns=column_names)
+            # Lade die Spalteninformationen für jede Datenquelle
+            try:
+                columns = info["columns"]
+            except KeyError:
+                print(f"Spalteninformationen für Datenquelle '{source}' nicht gefunden.")
+                continue
+            
+            # Extrahiere die Spaltennamen aus den Spalteninformationen
+            column_names = [column["name"] for column in columns]
 
-        # Entferne NaN-Werte und Duplikate
-        df.dropna(inplace=True)
-        df.drop_duplicates(inplace=True)
+            # Füge die Spalteninformationen zum DataFrame hinzu
+            df = df.append(pd.DataFrame(columns=column_names))
 
-        # Weitere Verarbeitung hier, falls erforderlich
-        return df
+            # Entferne NaN-Werte und Duplikate für die jeweilige Datenquelle
+            df.dropna(inplace=True)
+            df.drop_duplicates(inplace=True)
+
+            # Benenne das DataFrame entsprechend dem Namen der Datenquelle und füge es der bereinigten Datenstruktur hinzu
+            cleaned_data[source] = df
+
+        # Rückgabe der bereinigten Daten für alle Datenquellen
+        return cleaned_data
     else:
         return None
 
-def insert_data_to_mysql(connection, df):
+def insert_data_to_mysql(connection, df, source):
     if df is not None:
         cursor = connection.cursor()
         try:
             # Extrahiere Spaltennamen und Datentypen aus dem DataFrame
             columns = ", ".join([f"{column} {df[column].dtype}" for column in df.columns])
             # Erstelle die CREATE TABLE-Anweisung dynamisch
-            cursor.execute(f"CREATE TABLE IF NOT EXISTS ads_database ({columns})")
+            cursor.execute(f"CREATE TABLE IF NOT EXISTS {source} ({columns})")
 
             # Erstelle die INSERT-Anweisung dynamisch basierend auf den Spaltennamen
             placeholders = ", ".join(["%s"] * len(df.columns))
             columns = ", ".join(df.columns)
-            query = f"INSERT INTO ads_database ({columns}) VALUES ({placeholders})"
+            query = f"INSERT INTO {source} ({columns}) VALUES ({placeholders})"
 
             # Führe die INSERT-Anweisung für jede Zeile im DataFrame aus
             for index, row in df.iterrows():
                 cursor.execute(query, tuple(row))
 
             connection.commit()
-            print("Daten erfolgreich in MySQL-Datenbank gespeichert")
+            print(f"Daten für Datenquelle '{source}' erfolgreich in MySQL-Datenbank gespeichert")
         except Error as e:
             print("Fehler beim Einfügen von Daten:", e)
         finally:
@@ -131,10 +141,11 @@ def collect_data_and_store():
                 # Daten von der API abrufen
                 data = collect_data()
                 # Daten aufbereiten
-                df = clean_and_process_data(data)
-                if df is not None:
+                cleaned_data = clean_and_process_data(data)
+                if cleaned_data is not None:
                     # Daten in die MySQL-Datenbank einfügen
-                    insert_data_to_mysql(connection, df)
+                    for source, df in cleaned_data.items():
+                        insert_data_to_mysql(connection, df, source)
                     # SQL-Abfrage ausführen
                     query = "SELECT * FROM ads_database LIMIT 10"
                     results = execute_sql_query(connection, query)
