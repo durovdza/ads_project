@@ -5,102 +5,90 @@ from mysql.connector import Error
 import json
 import os
 
-def collect_data():
-    file_path = os.path.join("config", "config_data_sources.json")
-    
-    with open(file_path, 'r', encoding='utf-8') as file:
-        data = json.load(file)
-        
-    collected_data = {}
-    for source, info in data.items():
-        url = info['url']
-        response = requests.get(url)
-        if response.status_code == 200:
-            collected_data[source] = response.json()
-        else:
-            print(f"Fehler beim Abrufen der Daten von {source}: {response.status_code}")
-    
-    return collected_data
+# Funktion zum Abrufen der Daten von der API
+def get_data_from_api():
+    url = 'https://www.ogd.stadt-zuerich.ch/wfs/geoportal/Oeffentlich_zugaengliche_Strassenparkplaetze_OGD?service=WFS&version=1.1.0&request=GetFeature&outputFormat=GeoJSON&typename=view_pp_ogd'
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
+        print("Fehler beim Abrufen der Daten:", response.status_code)
+        return None
 
-# Funktion zum Entfernen von NaN-Werten und Duplikaten sowie zur Datenaufbereitung
 def clean_and_process_data(data):
-    cleaned_data = {}
+    if data is not None and 'features' in data:
+        features = data['features']
+        cleaned_data = []
 
-    if data is not None:
-        # Iteriere über alle Datenquellen
-        for source, info in data.items():
-            # Erstelle ein leeres DataFrame für jede Datenquelle
-            df = pd.DataFrame()
-
-            # Lade die Spalteninformationen für jede Datenquelle
-            try:
-                columns = info["columns"]
-            except KeyError:
-                print(f"Spalteninformationen für Datenquelle '{source}' nicht gefunden.")
-                continue
+        for feature in features:
+            properties = feature.get('properties', {})
+            geometry = feature.get('geometry', {})
+            coordinates = geometry.get('coordinates', [])
             
-            # Extrahiere die Spaltennamen aus den Spalteninformationen
-            column_names = [column["name"] for column in columns]
+            # Extracting ID from properties
+            id1 = properties.get('id1')
+            # Überprüfen, ob erforderliche Felder vorhanden sind
+            if 'parkdauer' in properties and 'art' in properties and 'id1' in properties and 'gebuehrenpflichtig' in properties and len(coordinates) == 2:
+                cleaned_data.append({
+                    'PARKDAUER': properties['parkdauer'],
+                    'ART': properties['art'],
+                    'ID_ART': id1,  # Using the extracted ID
+                    'GEBUEHRENPFLICHTIG': properties['gebuehrenpflichtig'],
+                    'GEOMETRIE': 'POINT({} {})'.format(coordinates[0], coordinates[1])  # Konvertierung der Koordinaten in das WKT-Format
+                })
 
-            # Füge die Spalteninformationen zum DataFrame hinzu
-            df = df.append(pd.DataFrame(columns=column_names))
-
-            # Entferne NaN-Werte und Duplikate für die jeweilige Datenquelle
-            df.dropna(inplace=True)
-            df.drop_duplicates(inplace=True)
-
-            # Benenne das DataFrame entsprechend dem Namen der Datenquelle und füge es der bereinigten Datenstruktur hinzu
-            cleaned_data[source] = df
-
-        # Rückgabe der bereinigten Daten für alle Datenquellen
-        return cleaned_data
+        df = pd.DataFrame(cleaned_data)
+        # Entfernen von NaN-Werten und Duplikaten
+        df.dropna(inplace=True)
+        df.drop_duplicates(inplace=True)
+        return df
     else:
         return None
 
-def insert_data_to_mysql(connection, df, source):
-    if df is not None:
+    
+def insert_data_to_mysql(connection, cleaned_data):
+    if cleaned_data is not None:  
         cursor = connection.cursor()
         try:
-            # Extrahiere Spaltennamen und Datentypen aus dem DataFrame
-            columns = ", ".join([f"{column} {df[column].dtype}" for column in df.columns])
-            # Erstelle die CREATE TABLE-Anweisung dynamisch
-            cursor.execute(f"CREATE TABLE IF NOT EXISTS {source} ({columns})")
-
-            # Erstelle die INSERT-Anweisung dynamisch basierend auf den Spaltennamen
-            placeholders = ", ".join(["%s"] * len(df.columns))
-            columns = ", ".join(df.columns)
-            query = f"INSERT INTO {source} ({columns}) VALUES ({placeholders})"
-
-            # Führe die INSERT-Anweisung für jede Zeile im DataFrame aus
-            for index, row in df.iterrows():
-                cursor.execute(query, tuple(row))
-
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS parking_data_public (
+                    ID1 INT AUTO_INCREMENT PRIMARY KEY,
+                    PARKDAUER INT,
+                    ART VARCHAR(255),
+                    ID_ART INT,
+                    GEBUEHRENPFLICHTIG VARCHAR(255),
+                    GEOMETRIE GEOMETRY
+                )
+            """)
+            for index, row in cleaned_data.iterrows():  
+                # Extract coordinates from the row
+                geometry = row["GEOMETRIE"]
+                # Einfügen der Daten in die Datenbank
+                cursor.execute("""
+                    INSERT INTO parking_data_public (
+                        PARKDAUER,
+                        ART,
+                        ID_ART,
+                        GEBUEHRENPFLICHTIG,
+                        GEOMETRIE
+                    ) VALUES (%s, %s, %s, %s, ST_GeomFromText(%s))
+                """, (
+                    row["PARKDAUER"],
+                    row["ART"],
+                    row["ID_ART"],
+                    row["GEBUEHRENPFLICHTIG"],
+                    geometry
+                ))
             connection.commit()
-            print(f"Daten für Datenquelle '{source}' erfolgreich in MySQL-Datenbank gespeichert")
+            print("Daten erfolgreich in MySQL-Datenbank gespeichert")
         except Error as e:
             print("Fehler beim Einfügen von Daten:", e)
         finally:
             cursor.close()
 
-# Funktion zum Ausführen von SQL-Abfragen
-def execute_sql_query(connection, query):
-    cursor = connection.cursor()
-    try:
-        cursor.execute(query)
-        result = cursor.fetchall()
-        return result
-    except Error as e:
-        print("Fehler bei der Ausführung der SQL-Abfrage:", e)
-    finally:
-        cursor.close()
 
-# Funktion zum Anzeigen der Abfrageergebnisse
-def display_query_results(results):
-    if results:
-        for row in results:
-            print(row)
-    else:
-        print("Keine Ergebnisse gefunden.")
+
 
 # Funktion zum Lesen der MySQL-Verbindungsinformationen aus der JSON-Datei
 def read_mysql_credentials(file_path):
@@ -139,18 +127,12 @@ def collect_data_and_store():
             if connection.is_connected():
                 print("MySQL-Verbindung erfolgreich hergestellt")
                 # Daten von der API abrufen
-                data = collect_data()
+                data = get_data_from_api()
                 # Daten aufbereiten
                 cleaned_data = clean_and_process_data(data)
                 if cleaned_data is not None:
                     # Daten in die MySQL-Datenbank einfügen
-                    for source, df in cleaned_data.items():
-                        insert_data_to_mysql(connection, df, source)
-                    # SQL-Abfrage ausführen
-                    query = "SELECT * FROM ads_database LIMIT 10"
-                    results = execute_sql_query(connection, query)
-                    # Ergebnisse anzeigen
-                    display_query_results(results)
+                    insert_data_to_mysql(connection, cleaned_data)  # Remove unnecessary iteration
     except Error as e:
         print("Fehler bei der Verbindung zur MySQL-Datenbank:", e)
     finally:
@@ -159,5 +141,5 @@ def collect_data_and_store():
             print("MySQL-Verbindung geschlossen")
 
 if __name__ == '__main__':
-    # Daten sammeln, aufbereiten und in die Datenbank einfüge
+    # Daten sammeln, aufbereiten und in die Datenbank einfügen
     collect_data_and_store()

@@ -42,5 +42,7 @@ source venv/bin/activate # For Unix or Linux systems
 # Install the project dependencies from 'requirements.txt'
 pip install -r requirements.txt
 
+
+
 # Run the local development server or script (specify the script if it's not 'app.py')
 python app.py
