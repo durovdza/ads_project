@@ -21,20 +21,45 @@ def collect_data():
     driver = webdriver.Chrome(service=service, options=opts)
 
     # Website to scrape
-    driver.get('https://opendata.swiss/de/dataset/median-einkommen-steuerpflichtiger-naturlicher-personen-nach-jahr-steuertarif-und-stadtquartier/resource/1e16f1e5-d78c-4a20-9462-19bbda54d79f')
+    driver.get('https://www.parkingzuerich.ch/freie-parkplaetze/')
 
-    # Wait for the table to load (you may need to adjust the waiting time)
-    time.sleep(30)
+    # Wait for the data to load (you may need to adjust the waiting time)
+    time.sleep(10)
 
-    # Extract table data
-    table = driver.find_element(By.XPATH, '/html/body/div/div/div[4]/div[1]/div[5]')
-    table_html = table.get_attribute('outerHTML')
+    # Extract parking data
+    parking_articles = driver.find_elements(By.CSS_SELECTOR, '.ht_parkhaus')
 
-    # Read HTML table into a pandas dataframe
-    df = pd.read_html(table_html)[0]
+    data = []
+    for article in parking_articles:
+        try:
+            name = article.find_element(By.CSS_SELECTOR, '.ht_parkhausTitle h2').text.strip()
+            freie_plaetze = article.find_element(By.CSS_SELECTOR, '.ht_freeplace').text.strip()
+            lat_script = article.find_element(By.XPATH, './/script[contains(text(), "var lat")]').get_attribute('innerHTML')
+            lat = lat_script.split('var lat = ')[1].split(';')[0]
+            lng = lat_script.split('var lng = ')[1].split(';')[0]
+
+            services_elements = article.find_elements(By.CSS_SELECTOR, '.ht_parkhausService img')
+            services = [service.get_attribute('alt') for service in services_elements]
+
+            payment_elements = article.find_elements(By.CSS_SELECTOR, '.ht_parkhaus_billing img')
+            payment_methods = [payment.get_attribute('alt') for payment in payment_elements]
+
+            data.append({
+                'Name': name,
+                'Freie Plätze': freie_plaetze,
+                'Latitude': lat,
+                'Longitude': lng,
+                'Services': ', '.join(services),
+                'Payment Methods': ', '.join(payment_methods)
+            })
+        except Exception as e:
+            print(f"Fehler beim Extrahieren von Daten für einen Parkplatz: {e}")
 
     # Close the driver
     driver.quit()
+
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
 
     return df
 
@@ -48,17 +73,23 @@ def clean_and_process_data(df):
 def insert_data_to_mysql(connection, df, table_name):
     cursor = connection.cursor()
     try:
-        # Erstelle die Tabelle, wenn sie nicht existiert
-        cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} ({', '.join([f'{col} TEXT' for col in df.columns])})")
+        # Erstelle die Tabelle im Schema 'ads', wenn sie nicht existiert
+        cursor.execute(f"CREATE TABLE IF NOT EXISTS ads.{table_name} ("
+                       f"`Name` TEXT, "
+                       f"`Freie Plätze` TEXT, "
+                       f"`Latitude` TEXT, "
+                       f"`Longitude` TEXT, "
+                       f"`Services` TEXT, "
+                       f"`Payment Methods` TEXT)")
 
         # Füge die Daten in die Tabelle ein
         for index, row in df.iterrows():
             placeholders = ', '.join(['%s'] * len(row))
-            query = f"INSERT INTO {table_name} VALUES ({placeholders})"
+            query = f"INSERT INTO ads.{table_name} VALUES ({placeholders})"
             cursor.execute(query, tuple(row))
 
         connection.commit()
-        print(f"Daten erfolgreich in die Tabelle '{table_name}' eingefügt")
+        print(f"Daten erfolgreich in die Tabelle 'ads.{table_name}' eingefügt")
     except Error as e:
         print("Fehler beim Einfügen von Daten:", e)
     finally:
@@ -112,8 +143,8 @@ def collect_data_and_store():
                 # Daten bereinigen und verarbeiten
                 df_cleaned = clean_and_process_data(df)
                 if not df_cleaned.empty:
-                    # Tabelle in MySQL-Datenbank einfügen
-                    table_name = 'median_income_data'
+                    # Tabelle im Schema 'ads' in MySQL-Datenbank einfügen
+                    table_name = 'parking_data'
                     insert_data_to_mysql(connection, df_cleaned, table_name)
     except Error as e:
         print("Fehler bei der Verbindung zur MySQL-Datenbank:", e)

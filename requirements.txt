@@ -54,3 +54,4 @@ xlsxwriter
 pymysql
 flask
 mysql-connector-python
+schedule
