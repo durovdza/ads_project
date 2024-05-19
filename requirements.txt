@@ -56,3 +56,4 @@ mysql-connector-python
 schedule
 selenium
 selenium webdriver manager
+geopy
