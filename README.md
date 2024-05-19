@@ -4,7 +4,7 @@ Applied Data Science Project FS24
 ## Team Members
 
 - Anna Wiedmer
-- Dzana Ducovic
+- Dzana Durovic
 - Sophie Maier
 
 ## Overview
