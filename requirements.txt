@@ -47,7 +47,6 @@ geopandas==0.14.3
 openai
 streamlit
 PyPDF2
-pandas
 plotly
 openpyxl
 xlsxwriter
@@ -55,3 +54,5 @@ pymysql
 flask
 mysql-connector-python
 schedule
+selenium
+selenium webdriver manager
