@@ -4,6 +4,7 @@ from mysql.connector import Error
 import json
 import os
 import folium
+from folium.plugins import MarkerCluster
 
 def connect_to_mysql(host, port, user, password, database):
     try:
@@ -35,28 +36,16 @@ def read_mysql_credentials(file_path):
         print("Fehler beim Lesen der JSON-Datei:", e)
         return None, None, None, None, None
 
-def load_geographic_data_from_mysql(connection, table_name):
+def load_geographic_data_from_mysql(connection, table_name, limit, offset):
     try:
-        # Annahme: Ihre Tabelle enthält Spalten 'BREITENGRAD' und 'LAENGENGRAD' für die Koordinaten
-        query = f"SELECT BREITENGRAD, LAENGENGRAD FROM {table_name} LIMIT 50"
+        query = f"SELECT BREITENGRAD, LAENGENGRAD FROM {table_name} LIMIT {limit} OFFSET {offset}"
         df = pd.read_sql(query, connection)
         return df
     except Error as e:
         print("Fehler beim Laden der geografischen Daten aus der MySQL-Datenbank:", e)
         return None
 
-def load_data_from_mysql(connection, table_name):
-    try:
-        query = f"SELECT * FROM {table_name}"
-        df = pd.read_sql(query, connection)
-        return df
-    except Error as e:
-        print("Fehler beim Laden der Daten aus der MySQL-Datenbank:", e)
-        return None
-
 def explore_data(df):
-    # Hier können Sie Ihre explorative Datenanalyse durchführen
-    # Zum Beispiel:
     print("Erste 5 Zeilen des DataFrames:")
     print(df.head())
     
@@ -66,17 +55,15 @@ def explore_data(df):
     print("\nStatistische Zusammenfassung des DataFrames:")
     print(df.describe())
 
-    # Führen Sie weitere Analyseoperationen durch, wie z.B. Visualisierungen usw.
-
 def create_map(df):
-    # Erstellt eine Karte mit dem Mittelpunkt basierend auf dem Durchschnitt der Koordinaten
     latitude = df['BREITENGRAD'].mean()
     longitude = df['LAENGENGRAD'].mean()
     map = folium.Map(location=[latitude, longitude], zoom_start=10)
+
+    marker_cluster = MarkerCluster().add_to(map)
     
-    # Markiert jeden Punkt auf der Karte
     for index, row in df.iterrows():
-        folium.Marker([row['BREITENGRAD'], row['LAENGENGRAD']]).add_to(map)
+        folium.Marker([row['BREITENGRAD'], row['LAENGENGRAD']]).add_to(marker_cluster)
     
     return map
 
@@ -87,13 +74,24 @@ if __name__ == '__main__':
         connection = connect_to_mysql(host, port, user, password, database)
         if connection:
             table_name = 'parkplatz_info'
-            df = load_geographic_data_from_mysql(connection, table_name)
-            if df is not None:
-                explore_data(df)
-                # Erstellen Sie die Karte und speichern Sie sie als HTML-Datei
-                map = create_map(df)
+            limit = 50
+            offset = 0
+            all_data = []
+
+            while True:
+                df = load_geographic_data_from_mysql(connection, table_name, limit, offset)
+                if df is None or df.empty:
+                    break
+                all_data.append(df)
+                offset += limit
+
+            if all_data:
+                combined_df = pd.concat(all_data, ignore_index=True)
+                explore_data(combined_df)
+                map = create_map(combined_df)
                 map.save("map.html")
                 print("Karte erstellt und als 'map.html' gespeichert.")
             else:
-                print("Fehler beim Laden der geografischen Daten aus der MySQL-Datenbank.")
-            connection.close()  # Verbindung schließen
+                print("Keine geografischen Daten geladen.")
+                
+            connection.close()
