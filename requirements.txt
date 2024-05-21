@@ -57,3 +57,4 @@ schedule
 selenium
 selenium webdriver manager
 geopy
+contextily
