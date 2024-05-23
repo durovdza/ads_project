@@ -46,7 +46,7 @@ prettytable==3.9.0
 geopandas==0.14.3
 openai
 streamlit
-PyPDF2
+PdfReader
 pandas
 plotly
 openpyxl
