@@ -1,27 +1,25 @@
-version: '3'
+version: '3.1'
 
 services:
-  app:
-    build: .
-    volumes:
-      - ./DS_project:/app/DS_project
+  db:
+    image: mysql
+    restart: always
     environment:
-      MYSQL_CREDENTIALS_FILE: /app/DS_project\config\mysql_credentials.txt
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"  # Hier wird der Port 3306 des Containers auf den Port 3306 des Hosts weitergeleitet
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: example
     depends_on:
       - db
 
-  db:
-    image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-      MYSQL_DATABASE: ads
-    volumes:
-      - ./mysql:/docker-entrypoint-initdb.d
-    secrets:
-      - mysql_root_password
-
-secrets:
-  mysql_root_password:
-    file: ./DS_project\config\mysql_credentials.txt
+volumes:
+  mysql_data:

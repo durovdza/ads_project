@@ -1,244 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADS Projekt</title>
-    <!-- Bootstrap CSS von einem CDN laden -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Font Awesome von einem CDN laden -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Eigenes CSS -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 960px;
-        }
-
-        /* Stil für den Header */
-        header {
-            background-color: rgba(0, 0, 0, .85);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            backdrop-filter: saturate(180%) blur(20px);
-            padding: 40px 0; /* Anpassung des Abstands */
-            position: relative;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #fff;
-        }
-
-        /* Stil für den Haupttitel im Header */
-        .header-title {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        /* Stil für den Untertitel im Header */
-        .header-subtitle {
-            font-size: 1.2rem;
-        }
-
-        /* Stil für den Prozessschritte-Bereich */
-        .process-steps {
-            padding: 50px 0;
-            background-color: #fff;
-            text-align: center;
-        }
-
-        /* Stil für den Prozessschritte-Titel */
-        .process-title {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        /* Stil für die einzelnen Prozessschritte */
-        .process-step {
-            padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
-            background-color: #fff;
-            border-radius: 10px;
-            transition: transform 0.3s ease;
-            box-shadow: none; /* Rahmen entfernen */
-        }
-
-        .process-step:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Stil für den Prozessschritte-Titel */
-        .process-step h3 {
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-
-        /* Stil für den Prozessschritte-Beschreibung */
-        .process-step p {
-            margin-bottom: 20px;
-        }
-
-        /* Stil für den Prozessschritte-Button */
-        .process-step .btn-more {
-            display: none; /* Standardmäßig ausgeblendet */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: transparent;
-            color: #fff;
-            font-size: 1.5rem;
-            border: none;
-            cursor: pointer;
-            transition: color 0.3s ease;
-            z-index: 1;
-        }
-
-        /* Stil für den Button "mehr erfahren" beim Schweben */
-        .process-step:hover .btn-more {
-            display: block; /* Anzeigen, wenn Maus über dem Bubble */
-            background-color: rgba(200, 200, 200, 0.8); /* Transparentes Hellgrau */
-            color: #333; /* Dunkle Schriftfarbe */
-        }
-
-        /* Stil für den Prozessschritte-Icon */
-        .process-step .icon {
-            background-color: #007bff;
-            border-radius: 50%;
-            padding: 40px; /* Größe der Icons erhöhen */
-            font-size: 2.5rem;
-            color: #fff;
-            margin: 0 auto 20px;
-            width: 120px; /* Breite des Icons */
-            height: 120px; /* Höhe des Icons */
-            line-height: 120px; /* Zentriert das Icon vertikal */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.3s ease;
-        }
-
-        .process-step:hover .icon {
-            transform: scale(1.1);
-        }
-
-        /* Stil für den Footer */
-        footer {
-            background-color: rgba(0, 0, 0, .85);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            backdrop-filter: saturate(180%) blur(20px);
-            padding: 40px 0; /* Anpassung des Abstands */
-            position: relative;
-            color: #fff;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <header class="site-header">
-        <div class="container">
-            <h1 class="header-title">Advanced Data Science Projekt</h1>
-            <p class="header-subtitle">Autoren: Anna Wiedmer, Dzana Durovic und Sophie Maier</p>
+<header id="ht_navigation_header" class="ht_fullwidth ht_wrapper">
+    <div class="ht_contentwidth">
+        <a class="logo" href="https://www.parkingzuerich.ch">
+            <img src="/wp-content/themes/parkingzuerich/img/Logo-Parking-Zuerich-RGB.svg" alt="Parking Zuerich Logo">
+        </a>
+        <a href="/best-deals/" id="best-deals-badge">Best Deals</a>
+        <div class="ht_miniMenu">
+            <a id="ht_language_de" href="#">DE</a>
+            <a id="ht_language_en" href="#">EN</a>
         </div>
-    </header>
 
-    <section class="process-steps">
-        <div class="container">
-            <h2 class="process-title">Unser Prozess</h2>
-            <p>Klicke auf die verschiedenen Prozessschritte, um mehr zu erfahren.</p>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="icon"><i class="fas fa-database"></i></div>
-                        <h3>Daten sammeln</h3>
-                        <p>Hier sammle ich meine Daten</p>
-                        <button onclick="window.location.href='/1_Daten_sammeln'" class="btn btn-primary btn-lg btn-block btn-more">Mehr erfahren</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="icon"><i class="fas fa-cogs"></i></div>
-                        <h3>Daten aufbereiten</h3>
-                        <p>Hier bereite ich meine Daten auf</p>
-                        <button onclick="window.location.href='/2_Daten_aufbereiten'" class="btn btn-primary btn-lg btn-block btn-more">Mehr erfahren</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="icon"><i class="fas fa-chart-bar"></i></div>
-                        <h3>Daten verstehen</h3>
-                        <p>Hier versuche ich meine Daten zu verstehen</p>
-                        <button onclick="window.location.href='/3_Daten_verstehen'" class="btn btn-primary btn-lg btn-block btn-more">Mehr erfahren</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="icon"><i class="fas fa-file-alt"></i></div>
-                        <h3>Daten vorverarbeiten</h3>
-                        <p>Hier verarbeite ich meine Daten weiter</p>
-                        <button onclick="window.location.href='/4_Daten_vorverarbeiten'" class="btn btn-primary btn-lg btn-block btn-more">Mehr erfahren</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="icon"><i class="fas fa-laptop-code"></i></div>
-                        <h3>Modell trainieren</h3>
-                        <p>Hier trainiere ich mein Modell</p>
-                        <button onclick="window.location.href='/5_Modell_trainieren'" class="btn btn-primary btn-lg btn-block btn-more">Mehr erfahren</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="icon"><i class="fas fa-check-circle"></i></div>
-                        <h3>Modell evaluieren</h3>
-                        <p>Hier evaluire ich mein Modell</p>
-                        <button onclick="window.location.href='/6_Modell_evaluieren'" class="btn btn-primary btn-lg btn-block btn-more">Mehr erfahren</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                        <h3>Modell deployen</h3>
-                        <p>Hier deploye ich mein Modell</p>
-                        <button onclick="window.location.href='/7_Modell_deployen'" class="btn btn-primary btn-lg btn-block btn-more">Mehr erfahren</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="icon"><i class="fas fa-comments"></i></div>
-                        <h3>Diskussion und Ergebnisse</h3>
-                        <p>Hier diskutiere ich meine Ergebnisse</p>
-                        <button onclick="window.location.href='/8_Diskussion&Ergebnisse'" class="btn btn-primary btn-lg btn-block btn-more">Mehr erfahren</button>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="icon"><i class="fas fa-lightbulb"></i></div>
-                        <h3>Schlussfolgerungen</h3>
-                        <p>Hier ziehe ich Schlussfolgerungen</p>
-                        <button onclick="window.location.href='/9_Schlussfolgerungen'" class="btn btn-primary btn-lg btn-block btn-more">Mehr erfahren</button>
-                    </div>
-                </div>
+        <nav class="ht_navHome">
+            <div class="menu-menu-container">
+                <ul id="menu-menu" class="menu">
+                    <li id="menu-item-421" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-419 current_page_item menu-item-has-children menu-item-421">
+                        <a href="https://www.parkingzuerich.ch/freie-parkplaetze/" aria-current="page">Freie Parkplätze</a>
+                        <span class="mobile_dropdown">
+                            <img src="/wp-content/themes/parkingzuerich/img/icons/menu-dropdown.svg">
+                        </span>
+                        <ul class="sub-menu">
+                            <li id="menu-item-318" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-318">
+                                <a href="https://www.parkingzuerich.ch/tarifrechner/">Tarifrechner</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="menu-item-314" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-314">
+                        <a href="https://www.parkingzuerich.ch/parkhaeuser-liste/">Parkhäuser</a>
+                        <span class="mobile_dropdown">
+                            <img src="/wp-content/themes/parkingzuerich/img/icons/menu-dropdown.svg">
+                        </span>
+                        <ul class="sub-menu">
+                            <li id="menu-item-286" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-286">
+                                <a href="https://www.parkingzuerich.ch/galerie/">Galerie</a>
+                            </li>
+                            <li id="menu-item-287" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-287">
+                                <a href="https://www.parkingzuerich.ch/best-deals/">Best Deals</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="menu-item-365" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-365">
+                        <a href="https://www.parkingzuerich.ch/unser-mietparkplatz-angebot/">Mietparkplätze &amp; Abos</a>
+                        <span class="mobile_dropdown">
+                            <img src="/wp-content/themes/parkingzuerich/img/icons/menu-dropdown.svg">
+                        </span>
+                        <ul class="sub-menu">
+                            <li id="menu-item-902" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-902">
+                                <a href="https://www.parkingzuerich.ch/unser-mietparkplatz-angebot/preise/">Preise</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="menu-item-832" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-832">
+                        <a href="https://www.parkingzuerich.ch/bei-uns-werben/">Bei uns werben</a>
+                    </li>
+                    <li id="menu-item-204" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-204">
+                        <a href="https://www.parkingzuerich.ch/ueber-uns/">Über uns</a>
+                        <span class="mobile_dropdown">
+                            <img src="/wp-content/themes/parkingzuerich/img/icons/menu-dropdown.svg">
+                        </span>
+                        <ul class="sub-menu">
+                            <li id="menu-item-547" class="menu-item menu-item-type-post_type_archive menu-item-object-ht_news menu-item-547">
+                                <a href="https://www.parkingzuerich.ch/news/">News</a>
+                            </li>
+                            <li id="menu-item-246" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-246">
+                                <a href="https://www.parkingzuerich.ch/kontakt/">Kontakt</a>
+                            </li>
+                            <li id="menu-item-1011" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1011">
+                                <a href="https://www.parkingzuerich.ch/organisation/">Organisation</a>
+                            </li>
+                            <li id="menu-item-842" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-842">
+                                <a href="https://www.parkingzuerich.ch/auszeichnungen/">Auszeichnungen</a>
+                            </li>
+                            <li id="menu-item-796" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-796">
+                                <a href="https://www.parkingzuerich.ch/agb/">AGB</a>
+                            </li>
+                            <li id="menu-item-249" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-249">
+                                <a href="https://www.parkingzuerich.ch/haeufige-fragen/">FAQ</a>
+                            </li>
+                            <li id="menu-item-3541" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3541">
+                                <a href="https://www.parkingzuerich.ch/videoueberwachung-videosicherung-2/">Videoüberwachung</a>
+                            </li>
+                            <li id="menu-item-5343" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-privacy-policy menu-item-5343">
+                                <a rel="privacy-policy" href="https://www.parkingzuerich.ch/datenschutzerklaerung/">Datenschutzerklärung</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 ADS Projekt Anna Wiedmer, Dzana Durovic und Sophie Maier. Alle Rechte vorbehalten.</p>
-        </div>
-    </footer>
-
-    <!-- Optional: jQuery und Bootstrap JS von einem CDN laden -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+        </nav>
+        <div id="ht_home_menu_button"></div>
+    </div>
+</header>

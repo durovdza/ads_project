@@ -25,7 +25,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_5dfb32b3e80b950d046b6c824eaca47a {
+                #map_99ab47b34ba8e34db4e9b048785fbd7d {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -42,16 +42,16 @@
 <body>
     
     
-            <div class="folium-map" id="map_5dfb32b3e80b950d046b6c824eaca47a" ></div>
+            <div class="folium-map" id="map_99ab47b34ba8e34db4e9b048785fbd7d" ></div>
         
 </body>
 <script>
     
     
-            var map_5dfb32b3e80b950d046b6c824eaca47a = L.map(
-                "map_5dfb32b3e80b950d046b6c824eaca47a",
+            var map_99ab47b34ba8e34db4e9b048785fbd7d = L.map(
+                "map_99ab47b34ba8e34db4e9b048785fbd7d",
                 {
-                    center: [47.3740885, 8.5408521],
+                    center: [47.3740506, 8.5410752],
                     crs: L.CRS.EPSG3857,
                     zoom: 15,
                     zoomControl: true,
@@ -63,189 +63,183 @@
 
         
     
-            var tile_layer_be978ddce128ec9b5af8f6aeb394c92d = L.tileLayer(
+            var tile_layer_278f7cecd0e7b4ac958d8a663c408479 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_be978ddce128ec9b5af8f6aeb394c92d.addTo(map_5dfb32b3e80b950d046b6c824eaca47a);
+            tile_layer_278f7cecd0e7b4ac958d8a663c408479.addTo(map_99ab47b34ba8e34db4e9b048785fbd7d);
         
     
-            var marker_e11b15c354600c749a4fb4e617d17868 = L.marker(
-                [47.3740885, 8.5408521],
+            var marker_5fc4fc389d8b94a561b7069f81b2ae62 = L.marker(
+                [47.3740506, 8.5410752],
                 {}
-            ).addTo(map_5dfb32b3e80b950d046b6c824eaca47a);
+            ).addTo(map_99ab47b34ba8e34db4e9b048785fbd7d);
         
     
-            var icon_e99c5d1a1fbaa1350062e0f3b7765821 = L.AwesomeMarkers.icon(
+            var icon_96d98aac6a1647ffd1c3538f1d61f9b8 = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "home", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
             );
-            marker_e11b15c354600c749a4fb4e617d17868.setIcon(icon_e99c5d1a1fbaa1350062e0f3b7765821);
+            marker_5fc4fc389d8b94a561b7069f81b2ae62.setIcon(icon_96d98aac6a1647ffd1c3538f1d61f9b8);
         
     
-        var popup_13d571de1be77da286ada3d853475faa = L.popup({"maxWidth": "100%"});
+        var popup_6e047b1946d24835f12c925462f901f2 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_2654f6612a83a4d98601f984b7eb2fad = $(`<div id="html_2654f6612a83a4d98601f984b7eb2fad" style="width: 100.0%; height: 100.0%;">User Location</div>`)[0];
-                popup_13d571de1be77da286ada3d853475faa.setContent(html_2654f6612a83a4d98601f984b7eb2fad);
+                var html_9021c4c0b891d196aba3f3e80703c89b = $(`<div id="html_9021c4c0b891d196aba3f3e80703c89b" style="width: 100.0%; height: 100.0%;">User Location</div>`)[0];
+                popup_6e047b1946d24835f12c925462f901f2.setContent(html_9021c4c0b891d196aba3f3e80703c89b);
             
         
 
-        marker_e11b15c354600c749a4fb4e617d17868.bindPopup(popup_13d571de1be77da286ada3d853475faa)
+        marker_5fc4fc389d8b94a561b7069f81b2ae62.bindPopup(popup_6e047b1946d24835f12c925462f901f2)
         ;
 
         
     
     
-            var marker_cluster_67d5f81dd88b4ceb86dcb36a89915654 = L.markerClusterGroup(
+            var marker_cluster_05c32931ac81d75e7d97ebbe98c34707 = L.markerClusterGroup(
                 {}
             );
         
     
-            var marker_4e9b8de0e419e5029f7ccb0221e3663b = L.marker(
-                [47.3741227, 8.5406141],
+            var marker_77b3f7d651992f1e9c4b4dd956859dfa = L.marker(
+                [47.3740506, 8.5410752],
                 {}
-            ).addTo(marker_cluster_67d5f81dd88b4ceb86dcb36a89915654);
+            ).addTo(marker_cluster_05c32931ac81d75e7d97ebbe98c34707);
         
     
-            var icon_bb2cce33dbb3a45b8a562a583bcb759b = L.AwesomeMarkers.icon(
-                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
-            );
-            marker_4e9b8de0e419e5029f7ccb0221e3663b.setIcon(icon_bb2cce33dbb3a45b8a562a583bcb759b);
-        
-    
-        var popup_4b37d145a9fdfa02593634b37e5ad657 = L.popup({"maxWidth": "100%"});
-
-        
-            
-                var html_25efa8a36727efb88efb4de454590097 = $(`<div id="html_25efa8a36727efb88efb4de454590097" style="width: 100.0%; height: 100.0%;">             <b>Name:</b> Urania<br>             <b>Latitude:</b> 47.3741227<br>             <b>Longitude:</b> 8.5406141<br>             <b>Parkdauer:</b> 0<br>             <b>Art:</b> Parkhaus             </div>`)[0];
-                popup_4b37d145a9fdfa02593634b37e5ad657.setContent(html_25efa8a36727efb88efb4de454590097);
-            
-        
-
-        marker_4e9b8de0e419e5029f7ccb0221e3663b.bindPopup(popup_4b37d145a9fdfa02593634b37e5ad657)
-        ;
-
-        
-    
-    
-            var marker_fb335642ea469d078619b20b933f784c = L.marker(
-                [47.37453865, 8.540964650000001],
-                {}
-            ).addTo(marker_cluster_67d5f81dd88b4ceb86dcb36a89915654);
-        
-    
-            var icon_5cc56f20cad48b5c5cd0b0855b5db1ec = L.AwesomeMarkers.icon(
+            var icon_2a0760a8f924e60af139d8aa7df3e27a = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
             );
-            marker_fb335642ea469d078619b20b933f784c.setIcon(icon_5cc56f20cad48b5c5cd0b0855b5db1ec);
+            marker_77b3f7d651992f1e9c4b4dd956859dfa.setIcon(icon_2a0760a8f924e60af139d8aa7df3e27a);
         
     
-        var popup_54e471262a1ab863056c098ab5b11402 = L.popup({"maxWidth": "100%"});
+        var popup_2ed83baa7eb533e3030b5a4aa25fb4d9 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_78535fe7a7c52dbaf6d72339c6d7b802 = $(`<div id="html_78535fe7a7c52dbaf6d72339c6d7b802" style="width: 100.0%; height: 100.0%;">             <b>Parking Zone (Strassenparkplatz)</b><br>             <b>Anzahl Parkplätze:</b> 20.0             </div>`)[0];
-                popup_54e471262a1ab863056c098ab5b11402.setContent(html_78535fe7a7c52dbaf6d72339c6d7b802);
+                var html_2031a9a22387c63fd940f3e530ba598b = $(`<div id="html_2031a9a22387c63fd940f3e530ba598b" style="width: 100.0%; height: 100.0%;">Parking Lot</div>`)[0];
+                popup_2ed83baa7eb533e3030b5a4aa25fb4d9.setContent(html_2031a9a22387c63fd940f3e530ba598b);
             
         
 
-        marker_fb335642ea469d078619b20b933f784c.bindPopup(popup_54e471262a1ab863056c098ab5b11402)
+        marker_77b3f7d651992f1e9c4b4dd956859dfa.bindPopup(popup_2ed83baa7eb533e3030b5a4aa25fb4d9)
         ;
 
         
     
     
-            var marker_2f6a0d3a62ad11504a35d09b7942f470 = L.marker(
-                [47.37596149295775, 8.541179267605632],
+            var marker_6373d3f4a5c967a9623d9e2c51e0866d = L.marker(
+                [47.374536, 8.5409973],
                 {}
-            ).addTo(marker_cluster_67d5f81dd88b4ceb86dcb36a89915654);
+            ).addTo(marker_cluster_05c32931ac81d75e7d97ebbe98c34707);
         
     
-            var icon_c3d36b958989eaf384bbfb5b0750a8f5 = L.AwesomeMarkers.icon(
+            var icon_67d6dd77d4f08a682eafe15abcec4c95 = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
             );
-            marker_2f6a0d3a62ad11504a35d09b7942f470.setIcon(icon_c3d36b958989eaf384bbfb5b0750a8f5);
+            marker_6373d3f4a5c967a9623d9e2c51e0866d.setIcon(icon_67d6dd77d4f08a682eafe15abcec4c95);
         
     
-        var popup_6c59840415222e6f796da86821837104 = L.popup({"maxWidth": "100%"});
+        var popup_464f49497347199ff5a42b76798e4d95 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_57eb98e8bbb14e1f5c77df21f2a9b940 = $(`<div id="html_57eb98e8bbb14e1f5c77df21f2a9b940" style="width: 100.0%; height: 100.0%;">             <b>Parking Zone (Strassenparkplatz)</b><br>             <b>Anzahl Parkplätze:</b> 71.0             </div>`)[0];
-                popup_6c59840415222e6f796da86821837104.setContent(html_57eb98e8bbb14e1f5c77df21f2a9b940);
+                var html_05a4ffa9f190db569dedc4a0e6df0b4d = $(`<div id="html_05a4ffa9f190db569dedc4a0e6df0b4d" style="width: 100.0%; height: 100.0%;">Parking Lot</div>`)[0];
+                popup_464f49497347199ff5a42b76798e4d95.setContent(html_05a4ffa9f190db569dedc4a0e6df0b4d);
             
         
 
-        marker_2f6a0d3a62ad11504a35d09b7942f470.bindPopup(popup_6c59840415222e6f796da86821837104)
+        marker_6373d3f4a5c967a9623d9e2c51e0866d.bindPopup(popup_464f49497347199ff5a42b76798e4d95)
         ;
 
         
     
     
-            var marker_468a90c841398f4007a317756464d62e = L.marker(
-                [47.37117357142857, 8.539456285714284],
+            var marker_5ac4022648aa1299c54f9a713bb21b73 = L.marker(
+                [47.3745349, 8.5409859],
                 {}
-            ).addTo(marker_cluster_67d5f81dd88b4ceb86dcb36a89915654);
+            ).addTo(marker_cluster_05c32931ac81d75e7d97ebbe98c34707);
         
     
-            var icon_f7a3140c59e11e43a163133add7fd613 = L.AwesomeMarkers.icon(
+            var icon_5cdbf07d9b3ae09e29fb53988707c877 = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
             );
-            marker_468a90c841398f4007a317756464d62e.setIcon(icon_f7a3140c59e11e43a163133add7fd613);
+            marker_5ac4022648aa1299c54f9a713bb21b73.setIcon(icon_5cdbf07d9b3ae09e29fb53988707c877);
         
     
-        var popup_55d05b6b2abd10a943cc2ea88e6c6a1f = L.popup({"maxWidth": "100%"});
+        var popup_80cda60587d8d548034a30427681f081 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_519b7cd5031283004ffe9ed3d73cd676 = $(`<div id="html_519b7cd5031283004ffe9ed3d73cd676" style="width: 100.0%; height: 100.0%;">             <b>Parking Zone (Strassenparkplatz)</b><br>             <b>Anzahl Parkplätze:</b> 7.0             </div>`)[0];
-                popup_55d05b6b2abd10a943cc2ea88e6c6a1f.setContent(html_519b7cd5031283004ffe9ed3d73cd676);
+                var html_3a8d2416c3caee70cefb0f2e4ab87452 = $(`<div id="html_3a8d2416c3caee70cefb0f2e4ab87452" style="width: 100.0%; height: 100.0%;">Parking Lot</div>`)[0];
+                popup_80cda60587d8d548034a30427681f081.setContent(html_3a8d2416c3caee70cefb0f2e4ab87452);
             
         
 
-        marker_468a90c841398f4007a317756464d62e.bindPopup(popup_55d05b6b2abd10a943cc2ea88e6c6a1f)
+        marker_5ac4022648aa1299c54f9a713bb21b73.bindPopup(popup_80cda60587d8d548034a30427681f081)
         ;
 
         
     
     
-            var marker_ef36d4b4403f51e441f87e067c31a9fb = L.marker(
-                [47.37656078947368, 8.538667736842106],
+            var marker_0037207e64110789786adbcc3b91bb9b = L.marker(
+                [47.3744378, 8.5404294],
                 {}
-            ).addTo(marker_cluster_67d5f81dd88b4ceb86dcb36a89915654);
+            ).addTo(marker_cluster_05c32931ac81d75e7d97ebbe98c34707);
         
     
-            var icon_2725aebbd757cbed95f7e78aed80674f = L.AwesomeMarkers.icon(
+            var icon_72790480112ea01f853758df4537204b = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
             );
-            marker_ef36d4b4403f51e441f87e067c31a9fb.setIcon(icon_2725aebbd757cbed95f7e78aed80674f);
+            marker_0037207e64110789786adbcc3b91bb9b.setIcon(icon_72790480112ea01f853758df4537204b);
         
     
-        var popup_093b250ec5ed9886bfd429e6160fdefb = L.popup({"maxWidth": "100%"});
+        var popup_74825790a6ef89e18f28d07b50d0b1e0 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_c7ecd2f4baa9acf0ab2190d92519350e = $(`<div id="html_c7ecd2f4baa9acf0ab2190d92519350e" style="width: 100.0%; height: 100.0%;">             <b>Parking Zone (Strassenparkplatz)</b><br>             <b>Anzahl Parkplätze:</b> 19.0             </div>`)[0];
-                popup_093b250ec5ed9886bfd429e6160fdefb.setContent(html_c7ecd2f4baa9acf0ab2190d92519350e);
+                var html_90334d2349562c0311685e44103f5699 = $(`<div id="html_90334d2349562c0311685e44103f5699" style="width: 100.0%; height: 100.0%;">Parking Lot</div>`)[0];
+                popup_74825790a6ef89e18f28d07b50d0b1e0.setContent(html_90334d2349562c0311685e44103f5699);
             
         
 
-        marker_ef36d4b4403f51e441f87e067c31a9fb.bindPopup(popup_093b250ec5ed9886bfd429e6160fdefb)
+        marker_0037207e64110789786adbcc3b91bb9b.bindPopup(popup_74825790a6ef89e18f28d07b50d0b1e0)
         ;
 
         
     
     
-            marker_cluster_67d5f81dd88b4ceb86dcb36a89915654.addTo(map_5dfb32b3e80b950d046b6c824eaca47a);
+            var marker_5b1e0060d92b4a2284554746c1d2440d = L.marker(
+                [47.3745452, 8.5404962],
+                {}
+            ).addTo(marker_cluster_05c32931ac81d75e7d97ebbe98c34707);
         
     
-            map_5dfb32b3e80b950d046b6c824eaca47a.fitBounds(
-                [[47.37117357142857, 8.538667736842106], [47.37656078947368, 8.541179267605632]],
-                {}
+            var icon_bc5782721f1a52d49b776f8dee688fe5 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
             );
+            marker_5b1e0060d92b4a2284554746c1d2440d.setIcon(icon_bc5782721f1a52d49b776f8dee688fe5);
+        
+    
+        var popup_745619256150b8c0f308ba4ae848a46f = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_3d4dc7ccf486c23a4394472421c37a4a = $(`<div id="html_3d4dc7ccf486c23a4394472421c37a4a" style="width: 100.0%; height: 100.0%;">Parking Lot</div>`)[0];
+                popup_745619256150b8c0f308ba4ae848a46f.setContent(html_3d4dc7ccf486c23a4394472421c37a4a);
+            
+        
+
+        marker_5b1e0060d92b4a2284554746c1d2440d.bindPopup(popup_745619256150b8c0f308ba4ae848a46f)
+        ;
+
+        
+    
+    
+            marker_cluster_05c32931ac81d75e7d97ebbe98c34707.addTo(map_99ab47b34ba8e34db4e9b048785fbd7d);
         
 </script>
 </html>

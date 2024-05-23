@@ -180,8 +180,7 @@ def display_on_map(user_location, nearest_parkings, strassenparkplatz_data, park
     m.save('nearest_parkings_map.html')
     print("Map saved as nearest_parkings_map.html")
 
-
-if __name__ == '__main__':
+def get_html():
     mysql_credentials_file = os.path.join("config", "config_mysql_credentials.json")
     host, port, user, password, database = read_mysql_credentials(mysql_credentials_file)
     if host and port and user and password and database:
@@ -202,3 +201,7 @@ if __name__ == '__main__':
             connection.close()
     else:
         print(f"Konfigurationsdatei nicht gefunden")
+
+
+if __name__ == '__main__':
+    get_html()

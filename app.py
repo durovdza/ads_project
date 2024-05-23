@@ -8,7 +8,9 @@ app = Flask(__name__, template_folder=os.path.join("src", "frontend", "templates
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Annahme: Das Skript get_parking_data gibt eine Liste von Parkplatzdaten zurück
+    parking_data = src.scripts.model_trainingget_html()
+    return render_template('index.html', parking_data=parking_data)
 
 # Daten sammeln
 @app.route('/1_Daten_sammeln')

@@ -58,3 +58,6 @@ selenium
 selenium webdriver manager
 geopy
 contextily
+docker
+Pillow
+torch
