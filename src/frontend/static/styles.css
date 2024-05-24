@@ -1,37 +1,52 @@
-/* Globale Stildefinitionen */
-
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
 }
 
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
+.container {
+    display: flex;
+    height: 100vh;
 }
 
-footer {
-    background-color: #333;
-    color: #fff;
+.table-container {
+    width: 30%;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+#search {
+    width: calc(100% - 100px);
     padding: 10px;
-    text-align: center;
-    position: fixed;
-    bottom: 0;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px;
+}
+
+#parkplaetze-table {
     width: 100%;
+    border-collapse: collapse;
 }
 
-main {
-    padding: 20px;
+#parkplaetze-table th, #parkplaetze-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
 }
 
-a {
-    color: #007bff;
-    text-decoration: none;
+#parkplaetze-table th {
+    background-color: #f2f2f2;
+    text-align: left;
 }
 
-a:hover {
-    text-decoration: underline;
+.map-container {
+    width: 70%;
+    height: 100%;
+}
+
+#map-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
 }

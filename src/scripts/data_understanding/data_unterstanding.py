@@ -59,17 +59,6 @@ def explore_data(df):
     print("\nStatistische Zusammenfassung des DataFrames:")
     print(df.describe(include='all'))
 
-def create_map(df):
-    latitude = df['BREITENGRAD'].mean()
-    longitude = df['LAENGENGRAD'].mean()
-    map = folium.Map(location=[latitude, longitude], zoom_start=10)
-
-    marker_cluster = MarkerCluster().add_to(map)
-    
-    for index, row in df.iterrows():
-        folium.Marker([row['BREITENGRAD'], row['LAENGENGRAD']]).add_to(marker_cluster)
-    
-    return map
 
 def visualize_distribution(df):
     numerical_columns = ['PREIS', 'FREIE_PLÄTZE', 'PARKDAUER', 'EINFAHRTSHÖHE', 'ANZAHL_PARKPLÄTZE']
@@ -131,9 +120,7 @@ if __name__ == '__main__':
                 cluster_analysis(combined_df)
                 for column in ['BESCHREIBUNG_BILD']:
                     image_analysis(combined_df, column)
-                map = create_map(combined_df)
-                map.save("map.html")
-                print("Karte erstellt und als 'map.html' gespeichert.")
+                
             else:
                 print("Keine Daten geladen.")
                 

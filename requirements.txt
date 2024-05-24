@@ -61,3 +61,5 @@ contextily
 docker
 Pillow
 torch
+asyncio
+aiohttp

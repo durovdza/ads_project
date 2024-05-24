@@ -1,75 +1,48 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify, send_file
 import subprocess
-import sys
+import json
 import os
+import mysql.connector
 
-app = Flask(__name__, template_folder=os.path.join("src", "frontend", "templates"))
-
+app = Flask(__name__, template_folder=os.path.join("src", "frontend", "templates"), static_folder=os.path.join("src", "frontend", "static"))
 
 @app.route('/')
 def index():
-    # Annahme: Das Skript get_parking_data gibt eine Liste von Parkplatzdaten zurück
-    parking_data = src.scripts.model_trainingget_html()
-    return render_template('index.html', parking_data=parking_data)
+    return render_template('index.html')
 
-# Daten sammeln
-@app.route('/1_Daten_sammeln')
-def daten_sammeln():
+@app.route('/api/parkplaetze')
+def api_parkplaetze():
+    return jsonify([
+        {"ID": "1", "NAME": "Parkplatz A", "ADRESSE": "Adresse A", "FREIE PLÄTZE": "5", "PREIS": "2 CHF/h", "PARKDAUER": 24, "BREITENGRAD": 47.3769, "LAENGENGRAD": 8.5417},
+        {"ID": "2", "NAME": "Parkplatz B", "ADRESSE": "Adresse B", "FREIE PLÄTZE": "10", "PREIS": "1.5 CHF/h", "PARKDAUER": 12, "BREITENGRAD": 47.3768, "LAENGENGRAD": 8.5416},
+    ])
 
-    # Hier kannst du den Code einfügen, um die Daten in der Webanwendung anzuzeigen oder zu verarbeiten
-    return render_template('daten_sammeln.html')
+@app.route('/karte')
+def karte():
+    #script_path = os.path.join("src", "scripts", "data_understanding", "karte_erstellen.py")
+    #try:
+    #    subprocess.run(['python', script_path], check=True)
+    #except subprocess.CalledProcessError as e:
+    #    return f"Error: {e.stderr}", 500
+    return send_file(os.path.join("src", "scripts", "data_understanding", "map.html"))
 
-# Daten aufbereiten
-@app.route('/2_Daten_aufbereiten')
-def daten_aufbereiten():
+@app.route('/knn_karte', methods=['POST'])
+def knn_karte():
+    data = request.json
+    adresse = data.get('adresse')
+    if not adresse:
+        return jsonify({"error": "Adresse nicht angegeben"}), 400
 
-    # Hier kannst du den Code einfügen, um die aufbereiteten Daten in der Webanwendung anzuzeigen oder zu verarbeiten
-    return render_template('daten_aufbereiten.html')
+    geo_data = {"adresse": adresse}
+    #with open(os.path.join("src", "scripts", "model_training", "data.json"), 'w') as f:
+    #    json.dump(geo_data, f)
 
-@app.route('/3_Daten_verstehen')
-def daten_verstehen():
-    return render_template('daten_verstehen.html')
-
-@app.route('/4_Daten_vorverarbeiten')
-def daten_vorverarbeiten():
-    return render_template('daten_vorverarbeiten.html')
-
-@app.route('/5_Modell_trainieren')
-def modell_trainieren():
-    return render_template('modell_trainieren.html')
-
-@app.route('/6_Modell_evaluieren')
-def modell_evaluieren():
-    return render_template('modell_evaluieren.html')
-
-@app.route('/7_Modell_deployen')
-def modell_deployen():
-    return render_template('modell_deployen.html')
-
-@app.route('/8_Diskussion&Ergebnisse')
-def diskussion_ergebnisse():
-    return render_template('diskussion_ergebnisse.html')
-
-@app.route('/9_Schlussfolgerungen')
-def schlussfolgerungen():
-    return render_template('schlussfolgerungen.html')
-
-def run_set_up_script():
-    try:
-        subprocess.check_call([sys.executable, os.path.join('src', 'scripts', 'set_up', 'set_up.py')])
-        print("Set-up erfolgreich abgeschlossen.")
-    except subprocess.CalledProcessError:
-        print("Fehler beim Ausführen des Set-up-Skripts.")
-
-def run_script(path):
-    try:
-        subprocess.check_call([sys.executable, path])
-        print("Skript " + path + " erfolgreich abgeschlossen.")
-    except subprocess.CalledProcessError:
-        print("Fehler beim Ausführen des Skripts " + path)
+    #script_path = os.path.join("src", "scripts", "model_training", "KNN_modell.py")
+    #try:
+    #    subprocess.run(['python', script_path], check=True)
+    #except subprocess.CalledProcessError as e:
+    #    return f"Error: {e.stderr}", 500
+    return send_file(os.path.join("src", "scripts", "model_training", "nearest_parkings_map.html"))
 
 if __name__ == '__main__':
-    run_set_up_script()
-    run_script(os.path.join('src', 'scripts', 'data_preparation', 'data_preparation.py'))
-    # Start der Flask-App
-    app.run(debug=False)
+    app.run(debug=True)

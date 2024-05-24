@@ -1,91 +1,61 @@
-<header id="ht_navigation_header" class="ht_fullwidth ht_wrapper">
-    <div class="ht_contentwidth">
-        <a class="logo" href="https://www.parkingzuerich.ch">
-            <img src="/wp-content/themes/parkingzuerich/img/Logo-Parking-Zuerich-RGB.svg" alt="Parking Zuerich Logo">
-        </a>
-        <a href="/best-deals/" id="best-deals-badge">Best Deals</a>
-        <div class="ht_miniMenu">
-            <a id="ht_language_de" href="#">DE</a>
-            <a id="ht_language_en" href="#">EN</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parkplätze in Zürich</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="table-container">
+            <input type="text" id="search" placeholder="Adresse eingeben">
+            <button onclick="suche()">Suche</button>
+            <table id="parkplaetze-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Adresse</th>
+                        <th>Verfügbare Plätze</th>
+                        <th>Preis</th>
+                        <th>Parkdauer</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Parkplätze werden hier eingefügt -->
+                </tbody>
+            </table>
         </div>
-
-        <nav class="ht_navHome">
-            <div class="menu-menu-container">
-                <ul id="menu-menu" class="menu">
-                    <li id="menu-item-421" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-419 current_page_item menu-item-has-children menu-item-421">
-                        <a href="https://www.parkingzuerich.ch/freie-parkplaetze/" aria-current="page">Freie Parkplätze</a>
-                        <span class="mobile_dropdown">
-                            <img src="/wp-content/themes/parkingzuerich/img/icons/menu-dropdown.svg">
-                        </span>
-                        <ul class="sub-menu">
-                            <li id="menu-item-318" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-318">
-                                <a href="https://www.parkingzuerich.ch/tarifrechner/">Tarifrechner</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li id="menu-item-314" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-314">
-                        <a href="https://www.parkingzuerich.ch/parkhaeuser-liste/">Parkhäuser</a>
-                        <span class="mobile_dropdown">
-                            <img src="/wp-content/themes/parkingzuerich/img/icons/menu-dropdown.svg">
-                        </span>
-                        <ul class="sub-menu">
-                            <li id="menu-item-286" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-286">
-                                <a href="https://www.parkingzuerich.ch/galerie/">Galerie</a>
-                            </li>
-                            <li id="menu-item-287" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-287">
-                                <a href="https://www.parkingzuerich.ch/best-deals/">Best Deals</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li id="menu-item-365" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-365">
-                        <a href="https://www.parkingzuerich.ch/unser-mietparkplatz-angebot/">Mietparkplätze &amp; Abos</a>
-                        <span class="mobile_dropdown">
-                            <img src="/wp-content/themes/parkingzuerich/img/icons/menu-dropdown.svg">
-                        </span>
-                        <ul class="sub-menu">
-                            <li id="menu-item-902" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-902">
-                                <a href="https://www.parkingzuerich.ch/unser-mietparkplatz-angebot/preise/">Preise</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li id="menu-item-832" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-832">
-                        <a href="https://www.parkingzuerich.ch/bei-uns-werben/">Bei uns werben</a>
-                    </li>
-                    <li id="menu-item-204" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-204">
-                        <a href="https://www.parkingzuerich.ch/ueber-uns/">Über uns</a>
-                        <span class="mobile_dropdown">
-                            <img src="/wp-content/themes/parkingzuerich/img/icons/menu-dropdown.svg">
-                        </span>
-                        <ul class="sub-menu">
-                            <li id="menu-item-547" class="menu-item menu-item-type-post_type_archive menu-item-object-ht_news menu-item-547">
-                                <a href="https://www.parkingzuerich.ch/news/">News</a>
-                            </li>
-                            <li id="menu-item-246" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-246">
-                                <a href="https://www.parkingzuerich.ch/kontakt/">Kontakt</a>
-                            </li>
-                            <li id="menu-item-1011" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1011">
-                                <a href="https://www.parkingzuerich.ch/organisation/">Organisation</a>
-                            </li>
-                            <li id="menu-item-842" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-842">
-                                <a href="https://www.parkingzuerich.ch/auszeichnungen/">Auszeichnungen</a>
-                            </li>
-                            <li id="menu-item-796" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-796">
-                                <a href="https://www.parkingzuerich.ch/agb/">AGB</a>
-                            </li>
-                            <li id="menu-item-249" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-249">
-                                <a href="https://www.parkingzuerich.ch/haeufige-fragen/">FAQ</a>
-                            </li>
-                            <li id="menu-item-3541" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3541">
-                                <a href="https://www.parkingzuerich.ch/videoueberwachung-videosicherung-2/">Videoüberwachung</a>
-                            </li>
-                            <li id="menu-item-5343" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-privacy-policy menu-item-5343">
-                                <a rel="privacy-policy" href="https://www.parkingzuerich.ch/datenschutzerklaerung/">Datenschutzerklärung</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <div id="ht_home_menu_button"></div>
+        <div class="map-container">
+            <iframe id="map-frame" src="/karte" frameborder="0"></iframe>
+        </div>
     </div>
-</header>
+    <script>
+        function suche() {
+            var adresse = document.getElementById('search').value;
+            if (adresse) {
+                fetch('/knn_karte', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ adresse: adresse })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw err });
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById('map-frame').src = url;
+                })
+                .catch(err => {
+                    alert(err.error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
