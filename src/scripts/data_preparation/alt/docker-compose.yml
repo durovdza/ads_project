@@ -9,7 +9,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"  # Hier wird der Port 3306 des Containers auf den Port 3306 des Hosts weitergeleitet
+      - "3307:3307"  # Hier wird der Port 3306 des Containers auf den Port 3306 des Hosts weitergeleitet
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -17,7 +17,7 @@ services:
       - "8080:80"
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: admin
     depends_on:
       - db
 

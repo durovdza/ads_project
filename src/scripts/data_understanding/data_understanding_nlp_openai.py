@@ -51,6 +51,8 @@ def ask_chatgpt(prompt, data):
     content = completion.choices[0].message.content
     return content
 
+
+
 def main():
     # Lese die MySQL-Anmeldedaten
     mysql_credentials_file = os.path.join("config", "config_mysql_credentials.json")

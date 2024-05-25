@@ -32,7 +32,7 @@ def collect_data():
             lat_script = article.find_element(By.XPATH, './/script[contains(text(), "var lat")]').get_attribute('innerHTML')
             lat = lat_script.split('var lat = ')[1].split(';')[0]
             lng = lat_script.split('var lng = ')[1].split(';')[0]
-            preis = 0
+            
             
 
             parkdauer_element = article.find_element(By.CSS_SELECTOR, '.ht_parkhausTime')
@@ -59,7 +59,7 @@ def collect_data():
                 'ID': id,
                 'ART': 'Parkhaus',
                 'NAME': name,
-                'PREIS': preis,
+                'PREIS': 'gebührenpflichtig',
                 'FREIE_PLÄTZE': freie_plaetze,
                 'PARKDAUER': parkdauer,
                 'BREITENGRAD': lat,

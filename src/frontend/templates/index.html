@@ -4,33 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parkplätze in Zürich</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="table-container">
-            <input type="text" id="search" placeholder="Adresse eingeben">
-            <button onclick="suche()">Suche</button>
-            <table id="parkplaetze-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Adresse</th>
-                        <th>Verfügbare Plätze</th>
-                        <th>Preis</th>
-                        <th>Parkdauer</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <!-- Parkplätze werden hier eingefügt -->
-                </tbody>
-            </table>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Parkplätze Zürich</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#parking-lots">Parkplätze</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Kontakt</a>
+                </li>
+            </ul>
         </div>
-        <div class="map-container">
-            <iframe id="map-frame" src="/karte" frameborder="0"></iframe>
+    </nav>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="search-container mb-4">
+                    <input type="text" id="search" class="form-control" placeholder="Adresse eingeben">
+                    <button class="btn btn-primary mt-2" onclick="suche()">Suche</button>
+                    <button class="btn btn-success mt-2" onclick="toggleAvailable()">Nur verfügbare anzeigen</button>
+                </div>
+                <div id="accordion">
+                    <!-- Parkplätze werden hier eingefügt -->
+                </div>
+                <button class="btn btn-secondary mt-2" id="next-button" onclick="loadMore()">Weiter</button>
+            </div>
+            <div class="col-md-8">
+                <div class="map-container mb-4">
+                    <iframe id="map-frame" src="/karte" frameborder="0" class="w-100 h-100"></iframe>
+                </div>
+            </div>
         </div>
     </div>
+    <footer class="bg-light text-center text-lg-start mt-4">
+        <div class="text-center p-3">
+            © 2023 Parkplätze Zürich
+        </div>
+    </footer>
     <script>
+        let currentPage = 1;
+        let showAvailable = false;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            loadParkingData(currentPage);
+        });
+
+        function loadParkingData(page) {
+            let url = `/api/parkplaetze?page=${page}`;
+            if (showAvailable) {
+                url += `&show_available=true`;
+            }
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const accordion = document.getElementById('accordion');
+                    if (page === 1) {
+                        accordion.innerHTML = '';  // Clear previous results if it's the first page
+                    }
+                    data.forEach(parkplatz => {
+                        const card = document.createElement('div');
+                        card.classList.add('card', 'mb-3');
+                        
+                        const cardHeader = document.createElement('div');
+                        cardHeader.classList.add('card-header');
+                        cardHeader.id = `heading${parkplatz.ID}`;
+                        
+                        const h5 = document.createElement('h5');
+                        h5.classList.add('mb-0');
+                        
+                        const button = document.createElement('button');
+                        button.classList.add('btn', 'btn-link');
+                        button.setAttribute('data-toggle', 'collapse');
+                        button.setAttribute('data-target', `#collapse${parkplatz.ID}`);
+                        button.setAttribute('aria-expanded', 'true');
+                        button.setAttribute('aria-controls', `collapse${parkplatz.ID}`);
+                        button.textContent = `${parkplatz.NAME} (${parkplatz.ART})`;
+                        
+                        h5.appendChild(button);
+                        cardHeader.appendChild(h5);
+                        card.appendChild(cardHeader);
+                        
+                        const collapse = document.createElement('div');
+                        collapse.id = `collapse${parkplatz.ID}`;
+                        collapse.classList.add('collapse');
+                        collapse.setAttribute('aria-labelledby', `heading${parkplatz.ID}`);
+                        collapse.setAttribute('data-parent', '#accordion');
+                        
+                        const cardBody = document.createElement('div');
+                        cardBody.classList.add('card-body');
+                        cardBody.innerHTML = `
+                            <p><strong>Art:</strong> ${parkplatz.ART}</p>
+                            <p><strong>Name:</strong> ${parkplatz.NAME}</p>
+                            <p><strong>Preis:</strong> ${parkplatz.PREIS}</p>
+                            <p><strong>Freie Plätze:</strong> ${parkplatz['FREIE_PLÄTZE']}</p>
+                            <p><strong>Parkdauer:</strong> ${parkplatz.PARKDAUER} Stunden</p>
+                            <p><strong>Dienstleistungen:</strong> ${parkplatz.DIENSTLEISTUNGEN}</p>
+                            <p><strong>Zahlungsmethoden:</strong> ${parkplatz.ZAHLUNGSMETHODEN}</p>
+                            <img src="${parkplatz.BESCHREIBUNG_BILD}" alt="Bild" class="img-fluid">
+                        `;
+                        
+                        collapse.appendChild(cardBody);
+                        card.appendChild(collapse);
+                        accordion.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        function loadMore() {
+            currentPage++;
+            loadParkingData(currentPage);
+        }
+
+        function toggleAvailable() {
+            showAvailable = !showAvailable;
+            currentPage = 1;  // Reset to the first page
+            loadParkingData(currentPage);
+        }
+
         function suche() {
             var adresse = document.getElementById('search').value;
             if (adresse) {
