@@ -46,11 +46,20 @@ prettytable==3.9.0
 geopandas==0.14.3
 openai
 streamlit
-PdfReader
-pandas
+PyPDF2
 plotly
 openpyxl
 xlsxwriter
 pymysql
 flask
 mysql-connector-python
+schedule
+selenium
+selenium webdriver manager
+geopy
+contextily
+docker
+Pillow
+torch
+asyncio
+aiohttp

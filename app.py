@@ -1,73 +1,136 @@
-from flask import Flask, render_template
-import subprocess
-import sys
+from flask import Flask, render_template, request, jsonify, send_file
+import json
 import os
+import mysql.connector
+from mysql.connector import Error
+import pandas as pd
+from openai import OpenAI
+import sys
+sys.path.append(r'C:\Users\smaie\ads_project\src\scripts\data_understanding')
+from data_understanding_nlp_openai import perform_search
+sys.path.append(r'C:\Users\smaie\ads_project\src\scripts\model_training')
+from KNN_modell import KNN_map
+sys.path.append(r'C:\Users\smaie\ads_project\src\scripts\data_understanding')
+from data_understanding_map import map_generating
 
-app = Flask(__name__, template_folder=os.path.join("src", "frontend", "templates"))
+app = Flask(__name__, template_folder=os.path.join("src", "frontend", "templates"), static_folder=os.path.join("src", "frontend", "static"))
 
+# Initialize OpenAI API
+client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+
+def connect_to_mysql(host, port, user, password, database):
+    try:
+        connection = mysql.connector.connect(
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            database=database
+        )
+        if connection.is_connected():
+            print("MySQL-Verbindung erfolgreich hergestellt")
+            return connection
+    except Error as e:
+        print("Fehler bei der Verbindung zur MySQL-Datenbank:", e)
+        return None
+
+def read_mysql_credentials(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+        host = data.get('host')
+        port = data.get('port')
+        user = data.get('user')
+        password = data.get('password')
+        database = data.get('database')
+        return host, port, user, password, database
+    except Exception as e:
+        print("Fehler beim Lesen der JSON-Datei:", e)
+        return None, None, None, None, None
+
+def load_data_from_mysql(connection, table_name, show_available, offset, limit):
+    try:
+        query = f"SELECT * FROM {table_name} WHERE 1=1"
+        
+        if show_available:
+            query += " AND `FREIE_PLÄTZE` > 0"
+        
+        query += f" ORDER BY art ASC, id LIMIT {limit} OFFSET {offset}"
+        print("Executing query:", query)  # Debugging line to print the query
+        df = pd.read_sql(query, connection)
+        return df
+    except Error as e:
+        print("Fehler beim Laden der Daten aus der MySQL-Datenbank:", e)
+        return None
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Daten sammeln
-@app.route('/1_Daten_sammeln')
-def daten_sammeln():
+@app.route('/api/parkplaetze')
+def api_parkplaetze():
+    credentials_file = r'C:\Users\smaie\ads_project\config\config_mysql_credentials.json'  # Using raw string to avoid escape sequence issues
+    table_name = "parkplatz_info"  # Updated with your database name
 
-    # Hier kannst du den Code einfügen, um die Daten in der Webanwendung anzuzeigen oder zu verarbeiten
-    return render_template('daten_sammeln.html')
+    host, port, user, password, database = read_mysql_credentials(credentials_file)
+    if host and port and user and password and database:
+        connection = connect_to_mysql(host, port, user, password, database)
+        if connection:
+            try:
+                page = int(request.args.get('page', 1))
+                limit = 20
+                offset = (page - 1) * limit
+                show_available = request.args.get('show_available') == 'true'
+                df = load_data_from_mysql(connection, table_name, show_available, offset, limit)
+                if df is not None:
+                    return df.to_json(orient='records')
+                else:
+                    return jsonify({"error": "Fehler beim Laden der Daten"}), 500
+            except Exception as e:
+                print("Fehler bei der Datenverarbeitung:", e)
+                return jsonify({"error": "Fehler bei der Datenverarbeitung"}), 500
+        else:
+            return jsonify({"error": "Fehler bei der Verbindung zur Datenbank"}), 500
+    else:
+        return jsonify({"error": "Fehler beim Lesen der Anmeldeinformationen"}), 500
 
-# Daten aufbereiten
-@app.route('/2_Daten_aufbereiten')
-def daten_aufbereiten():
+@app.route('/api/search', methods=['POST'])
+def api_search():
+    data = request.json
+    prompt = data.get('prompt')
+    if not prompt:
+        return jsonify({"error": "Kein Suchbegriff angegeben"}), 400
 
-    # Hier kannst du den Code einfügen, um die aufbereiteten Daten in der Webanwendung anzuzeigen oder zu verarbeiten
-    return render_template('daten_aufbereiten.html')
-
-@app.route('/3_Daten_verstehen')
-def daten_verstehen():
-    return render_template('daten_verstehen.html')
-
-@app.route('/4_Daten_vorverarbeiten')
-def daten_vorverarbeiten():
-    return render_template('daten_vorverarbeiten.html')
-
-@app.route('/5_Modell_trainieren')
-def modell_trainieren():
-    return render_template('modell_trainieren.html')
-
-@app.route('/6_Modell_evaluieren')
-def modell_evaluieren():
-    return render_template('modell_evaluieren.html')
-
-@app.route('/7_Modell_deployen')
-def modell_deployen():
-    return render_template('modell_deployen.html')
-
-@app.route('/8_Diskussion&Ergebnisse')
-def diskussion_ergebnisse():
-    return render_template('diskussion_ergebnisse.html')
-
-@app.route('/9_Schlussfolgerungen')
-def schlussfolgerungen():
-    return render_template('schlussfolgerungen.html')
-
-def run_set_up_script():
     try:
-        subprocess.check_call([sys.executable, os.path.join('src', 'scripts', 'set_up', 'set_up.py')])
-        print("Set-up erfolgreich abgeschlossen.")
-    except subprocess.CalledProcessError:
-        print("Fehler beim Ausführen des Set-up-Skripts.")
+        analysis = perform_search(prompt)
+        return jsonify({"analysis": analysis})
+    except Exception as e:
+        print("Fehler bei der Verarbeitung der Suchanfrage:", e)
+        return jsonify({"error": "Fehler bei der Verarbeitung der Suchanfrage"}), 500
 
-def run_script(path):
+@app.route('/karte')
+def karte():
+    map_generating
     try:
-        subprocess.check_call([sys.executable, path])
-        print("Skript " + path + " erfolgreich abgeschlossen.")
-    except subprocess.CalledProcessError:
-        print("Fehler beim Ausführen des Skripts " + path)
+        return send_file(r'C:\Users\smaie\ads_project\src\scripts\data_understanding\map.html')
+    except Exception as e:
+        print("Fehler beim Senden der Datei:", e)
+        return jsonify({"error": "Fehler beim Senden der Datei"}), 500
+
+@app.route('/knn_karte', methods=['POST'])
+def knn_karte():
+    KNN_map()
+    data = request.json
+    adresse = data.get('adresse')
+    if not adresse:
+        return jsonify({"error": "Adresse nicht angegeben"}), 400
+
+    try:
+        geo_data = {"adresse": adresse}
+        return send_file(r'C:\Users\smaie\ads_project\src\scripts\model_training\KNN_map.html')
+    except Exception as e:
+        print("Fehler beim Senden der KNN-Karte:", e)
+        return jsonify({"error": "Fehler beim Senden der KNN-Karte"}), 500
 
 if __name__ == '__main__':
-    run_set_up_script()
-    run_script(os.path.join('src', 'scripts', 'data_preparation', 'data_preparation.py'))
-    # Start der Flask-App
-    app.run(debug=False)
+    app.run(debug=True)
