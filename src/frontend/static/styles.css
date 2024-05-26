@@ -1,37 +1,432 @@
-/* Globale Stildefinitionen */
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap');
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Libre Franklin', Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: white; /* Hintergrund der Website weiß machen */
 }
 
-header {
-    background-color: #333;
-    color: #fff;
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.table-container {
+    width: 30%;
+    overflow-y: auto;
     padding: 20px;
-    text-align: center;
 }
 
-footer {
-    background-color: #333;
-    color: #fff;
+#search {
+    width: calc(100% - 100px);
     padding: 10px;
-    text-align: center;
-    position: fixed;
-    bottom: 0;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px;
+}
+
+#parkplaetze-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#parkplaetze-table th, #parkplaetze-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#parkplaetze-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.map-container {
+    width: 100%;
+    height: 100%;
+}
+
+#map-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+
+.sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    background-color: rgb(255, 255, 255); /* Hintergrund der Sidebar weiß machen */
+    border-right: 1px solid #e3e3e3;
+    padding: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+.search-container {
+    display: flex;
     width: 100%;
 }
 
-main {
-    padding: 20px;
+.search-container input,
+.search-container button {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
-a {
-    color: #007bff;
-    text-decoration: none;
+.search-container input {
+    flex-grow: 1;
+    margin-right: 10px;
 }
 
-a:hover {
-    text-decoration: underline;
+.search-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.search-container button:hover {
+    background-color: #0056b3;
+}
+
+.toggle-button {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.toggle-button input {
+    display: none;
+}
+
+.toggle-button .slider {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 20px;
+    transition: background-color 0.2s;
+    margin-right: 10px;
+}
+
+.toggle-button .slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    top: 1px;
+    left: 1px;
+    transition: transform 0.2s;
+}
+
+.toggle-button input:checked + .slider {
+    background-color: #007bff;
+}
+
+.toggle-button input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+.toggle-button .label {
+    font-size: 14px;
+}
+
+/* Anpassungen für die Kartenansicht */
+.map-container {
+    flex-grow: 1;
+    height: 100vh;
+    margin-bottom: 20px;
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#map-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Anpassungen für die Parkplätze-Karten */
+.card {
+    border-radius: 10px;
+    border: none; /* Entfernt die Umrandung der Akkordeons */
+    margin-bottom: 20px;
+    color: black;
+    background-color: white; /* Hintergrundfarbe der Karten */
+}
+.card-header,
+.card-header * {
+    color: black !important;
+}
+
+.card-body,
+.card-body * {
+    color: black !important;
+}
+.card-header {
+    background-color:  rgb(245, 245, 245); /* Hintergrundfarbe des Headers */
+    color: black !important; /* Schriftfarbe im Header */
+    font-weight: 700; /* Fettgedruckter Text im Header */
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 10px 10px 0 0; /* Runde obere Ecken */
+    border-bottom: none; /* Entfernt die untere Border des Headers */
+}
+
+.card-header .material-icons {
+    font-size: 24px;
+    margin-right: 10px;
+    color: rgb(104, 103, 103);
+}
+
+.card-body {
+    border-top: none; /* Entfernt die obere Border des Bodys */
+    border-radius: 0 0 10px 10px; /* Runde untere Ecken */
+    background-color: rgb(245, 245, 245); /* Hintergrundfarbe des Bodys */
+    color: black !important; /* Schriftfarbe im Body */
+}
+
+.card-body img {
+    max-width: 100%;
+    border-radius: 0 0 10px 10px;
+}
+
+.parking-card:hover .card-header,
+.parking-card:hover .card-body {
+    background-color: #e6e6e6; /* Hellgrauer Hover-Effekt */
+}
+
+.parking-card:hover .no-underline {
+    text-decoration: none !important;
+}
+
+.parking-card .no-underline {
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+.parking-card .badge {
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+/* Entfernt den blauen Rahmen beim Klicken */
+.parking-card .btn-link:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Verfügbarkeitsfarbe */
+.parking-card .availability {
+    margin-left: auto;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.parking-card .availability.green {
+    background-color: #28a745;
+    color: white;
+}
+
+.parking-card .availability.orange {
+    background-color: #ffc107;
+    color: black;
+}
+
+.parking-card .availability.red {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Anpassungen für den Footer */
+footer {
+    background-color: #f9f9f9;
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #e3e3e3;
+}
+
+/* Anpassungen für die Chatbox */
+.chatbox {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    max-height: 60px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: max-height 0.3s ease;
+    z-index: 1000; /* Ensures the chatbox is on top of other elements */
+    overflow: hidden;
+}
+
+.chatbox.expanded {
+    max-height: 600px;
+}
+
+.chatbox-header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chatbox-header span {
+    font-size: 16px;
+}
+
+.chatbox-header i {
+    font-size: 24px;
+}
+
+.chatbox-body,
+.chatbox-footer {
+    padding: 10px;
+    display: none;
+}
+
+.chatbox.expanded .chatbox-body,
+.chatbox.expanded .chatbox-footer {
+    display: block;
+}
+
+.chatbox-body {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.chatbox-footer {
+    display: flex;
+    align-items: center;
+}
+
+.chatbox-input {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.query-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.query-buttons button {
+    margin-bottom: 10px;
+}
+
+.message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.message .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.message.bot .avatar {
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.message.user .avatar {
+    background-color: #ccc;
+    background-image: url('https://via.placeholder.com/40');
+    background-size: cover;
+}
+
+.message .bubble {
+    max-width: 70%;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.message.bot .bubble {
+    background-color: #007bff;
+    color: white;
+}
+
+.message.user .bubble {
+    background-color: #f1f1f1;
+    color: black;
+}
+
+.message.bot .bubble::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: -10px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid #007bff;
+}
+
+.message.user .bubble::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: -10px;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #f1f1f1;
+}
+
+.navbar .navbar-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: black;
+    margin-left: 10px;
+}
+
+.navbar-brand .material-icons {
+    font-size: 40px;
+    color: black;
 }
