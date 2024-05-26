@@ -51,11 +51,9 @@ def ask_chatgpt(prompt, data):
     content = completion.choices[0].message.content
     return content
 
-
-
-def main():
+def perform_search(prompt):
     # Lese die MySQL-Anmeldedaten
-    mysql_credentials_file = os.path.join("config", "config_mysql_credentials.json")
+    mysql_credentials_file = r'C:\Users\smaie\ads_project\config\config_mysql_credentials.json'
     host, port, user, password, database = read_mysql_credentials(mysql_credentials_file)    
 
     # Verbinde zur MySQL-Datenbank
@@ -72,23 +70,16 @@ def main():
             df = pd.DataFrame(parkplaetze)
             data_json = df.to_json(orient='records')
             
-            # Benutzereingabe für den Prompt
-            prompt = input("Bitte geben Sie einen Prompt ein (z.B. 'Zeige alle Parkhäuser' oder 'Zeige Parkhaus A mit mehr als 50 Parkplätzen'): ")
-
             # Sende den Prompt und die Daten an OpenAI
             analysis = ask_chatgpt(prompt, data_json)
 
-            # Drucke die Analyse
-            print("Analyse:")
-            print(analysis)
+            cursor.close()
+            connection.close()
+
+            return analysis
         else:
-            print("Keine Parkhäuser gefunden.")
-
-        # Schließe die Verbindung
-        cursor.close()
-        connection.close()
+            cursor.close()
+            connection.close()
+            return "Keine Parkhäuser gefunden."
     else:
-        print("Keine Verbindung zur Datenbank möglich.")
-
-if __name__ == "__main__":
-    main()
+        return "Keine Verbindung zur Datenbank möglich."

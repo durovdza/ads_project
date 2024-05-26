@@ -1,54 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parkplätze in Zürich</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Parkplätze Zürich</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#parking-lots">Parkplätze</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Kontakt</a>
-                </li>
-            </ul>
-        </div>
+        <a class="navbar-brand" href="#">
+            <span class="material-icons" style="font-size: 40px; color: black;">garage</span>
+        </a>
+        <span class="navbar-text font-weight-bold" style="font-size: 1.5rem;">Parking Zürich</span>
     </nav>
-    <div class="container-fluid mt-4">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
-                <div class="search-container mb-4">
-                    <input type="text" id="search" class="form-control" placeholder="Adresse eingeben">
-                    <button class="btn btn-primary mt-2" onclick="suche()">Suche</button>
-                    <button class="btn btn-success mt-2" onclick="toggleAvailable()">Nur verfügbare anzeigen</button>
+            <div class="col-md-4 sidebar custom-scrollbar">
+                <div class="search-container d-flex">
+                    <input type="text" id="search" class="form-control mr-2" placeholder="Adresse eingeben">
+                    <button class="btn btn-primary" onclick="suche()">Suche</button>
+                    <button class="btn btn-secondary ml-2" onclick="resetSearch()">Zurücksetzen</button>
                 </div>
-                <div id="accordion">
+                <label class="toggle-button">
+                    <input type="checkbox" id="availableToggle" onchange="toggleAvailable()">
+                    <span class="slider"></span>
+                    <span class="label">Nur verfügbare anzeigen</span>
+                </label>
+                <div id="accordion" class="custom-scrollbar">
                     <!-- Parkplätze werden hier eingefügt -->
                 </div>
-                <button class="btn btn-secondary mt-2" id="next-button" onclick="loadMore()">Weiter</button>
             </div>
             <div class="col-md-8">
-                <div class="map-container mb-4">
+                <div class="map-container">
                     <iframe id="map-frame" src="/karte" frameborder="0" class="w-100 h-100"></iframe>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="chatbox" id="chatbox">
+        <div class="chatbox-header" id="chatbox-header">
+            <span>Virtueller Assistent</span>
+            <i class="fas fa-comments"></i>
+        </div>
+        <div class="chatbox-body" id="chatbox-body">
+            <div class="message bot">
+                <div class="avatar"><i class="fas fa-robot"></i></div>
+                <div class="bubble"><strong>Wie kann ich Ihnen behilflich sein?</strong></div>
+            </div>
+            <div class="query-buttons">
+                <button class="btn btn-light" onclick="presetQuery('Zeige alle Parkhäuser')">Zeige alle Parkhäuser</button>
+                <button class="btn btn-light" onclick="presetQuery('Zeige Parkhaus A mit mehr als 50 Parkplätzen')">Zeige Parkhaus A mit mehr als 50 Parkplätzen</button>
+                <button class="btn btn-light" onclick="presetQuery('Welche Parkhäuser haben die niedrigsten Preise?')">Welche Parkhäuser haben die niedrigsten Preise?</button>
+            </div>
+            <div id="search-results" class="mt-3">
+                <!-- NLP search results will be displayed here -->
+            </div>
+        </div>
+        <div class="chatbox-footer" id="chatbox-footer">
+            <input type="text" id="prompt" class="form-control chatbox-input" placeholder="Suchbegriff eingeben">
+            <button class="btn btn-secondary" onclick="performSearch()">Senden</button>
         </div>
     </div>
     <footer class="bg-light text-center text-lg-start mt-4">
@@ -59,12 +77,18 @@
     <script>
         let currentPage = 1;
         let showAvailable = false;
+        let isLoading = false;
 
         document.addEventListener("DOMContentLoaded", function() {
             loadParkingData(currentPage);
+
+            // Add scroll event listener
+            document.querySelector('.custom-scrollbar').addEventListener('scroll', handleScroll);
         });
 
         function loadParkingData(page) {
+            if (isLoading) return;
+            isLoading = true;
             let url = `/api/parkplaetze?page=${page}`;
             if (showAvailable) {
                 url += `&show_available=true`;
@@ -78,17 +102,21 @@
                     }
                     data.forEach(parkplatz => {
                         const card = document.createElement('div');
-                        card.classList.add('card', 'mb-3');
+                        card.classList.add('card', 'mb-3', 'parking-card');
                         
                         const cardHeader = document.createElement('div');
-                        cardHeader.classList.add('card-header');
+                        cardHeader.classList.add('card-header', 'd-flex', 'align-items-center');
                         cardHeader.id = `heading${parkplatz.ID}`;
                         
+                        const icon = document.createElement('span');
+                        icon.classList.add('material-icons', 'mr-2');
+                        icon.textContent = parkplatz.ART === 'Parkhaus' ? 'garage' : 'local_parking';
+                        
                         const h5 = document.createElement('h5');
-                        h5.classList.add('mb-0');
+                        h5.classList.add('mb-0', 'flex-grow-1');
                         
                         const button = document.createElement('button');
-                        button.classList.add('btn', 'btn-link');
+                        button.classList.add('btn', 'btn-link', 'stretched-link', 'no-underline');
                         button.setAttribute('data-toggle', 'collapse');
                         button.setAttribute('data-target', `#collapse${parkplatz.ID}`);
                         button.setAttribute('aria-expanded', 'true');
@@ -96,7 +124,24 @@
                         button.textContent = `${parkplatz.NAME} (${parkplatz.ART})`;
                         
                         h5.appendChild(button);
+                        cardHeader.appendChild(icon);
                         cardHeader.appendChild(h5);
+
+                        const availability = document.createElement('span');
+                        availability.classList.add('availability');
+                        if (parkplatz['FREIE_PLÄTZE'] > 50) {
+                            availability.classList.add('green');
+                            availability.textContent =  `${parkplatz.FREIE_PLÄTZE}`;
+                        } else if (parkplatz['FREIE_PLÄTZE'] > 25) {
+                            availability.classList.add('orange');
+                            availability.textContent =  `${parkplatz.FREIE_PLÄTZE}`;
+                        } else {
+                            availability.classList.add('red');
+                            availability.textContent = `${parkplatz.FREIE_PLÄTZE}`;
+                        }
+
+                        cardHeader.appendChild(availability);
+
                         card.appendChild(cardHeader);
                         
                         const collapse = document.createElement('div');
@@ -108,11 +153,6 @@
                         const cardBody = document.createElement('div');
                         cardBody.classList.add('card-body');
                         cardBody.innerHTML = `
-                            <p><strong>Art:</strong> ${parkplatz.ART}</p>
-                            <p><strong>Name:</strong> ${parkplatz.NAME}</p>
-                            <p><strong>Preis:</strong> ${parkplatz.PREIS}</p>
-                            <p><strong>Freie Plätze:</strong> ${parkplatz['FREIE_PLÄTZE']}</p>
-                            <p><strong>Parkdauer:</strong> ${parkplatz.PARKDAUER} Stunden</p>
                             <p><strong>Dienstleistungen:</strong> ${parkplatz.DIENSTLEISTUNGEN}</p>
                             <p><strong>Zahlungsmethoden:</strong> ${parkplatz.ZAHLUNGSMETHODEN}</p>
                             <img src="${parkplatz.BESCHREIBUNG_BILD}" alt="Bild" class="img-fluid">
@@ -122,21 +162,63 @@
                         card.appendChild(collapse);
                         accordion.appendChild(card);
                     });
+                    isLoading = false;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
+                    isLoading = false;
                 });
         }
 
-        function loadMore() {
-            currentPage++;
-            loadParkingData(currentPage);
+        function handleScroll() {
+            const container = document.querySelector('.custom-scrollbar');
+            if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+                currentPage++;
+                loadParkingData(currentPage);
+            }
         }
 
         function toggleAvailable() {
             showAvailable = !showAvailable;
             currentPage = 1;  // Reset to the first page
             loadParkingData(currentPage);
+        }
+
+        function performSearch() {
+            const prompt = document.getElementById('prompt').value;
+            if (!prompt) {
+                alert("Bitte geben Sie einen Suchbegriff ein.");
+                return;
+            }
+
+            fetch('/api/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const searchResults = document.getElementById('search-results');
+                if (data.analysis) {
+                    searchResults.innerHTML += `<div class="message bot">
+                        <div class="avatar"><i class="fas fa-robot"></i></div>
+                        <div class="bubble">${data.analysis}</div>
+                    </div>`;
+                    document.getElementById('chatbox-body').scrollTop = document.getElementById('chatbox-body').scrollHeight;
+                } else if (data.error) {
+                    searchResults.innerHTML = `<p>${data.error}</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error performing search:', error);
+            });
+        }
+
+        function presetQuery(query) {
+            document.getElementById('prompt').value = query;
+            performSearch();
         }
 
         function suche() {
@@ -164,6 +246,17 @@
                 });
             }
         }
+
+        function resetSearch() {
+            document.getElementById('search').value = '';
+            document.getElementById('map-frame').src = '/karte';
+        }
+
+        document.getElementById('chatbox-header').addEventListener('click', function() {
+            const chatbox = document.getElementById('chatbox');
+            chatbox.classList.toggle('expanded');
+        });
+        
     </script>
 </body>
 </html>

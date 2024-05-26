@@ -4,8 +4,15 @@ import os
 import mysql.connector
 from mysql.connector import Error
 import pandas as pd
+from openai import OpenAI
+import sys
+sys.path.append(r'C:\Users\smaie\ads_project\src\scripts\data_understanding')
+from data_understanding_nlp_openai import perform_search
 
 app = Flask(__name__, template_folder=os.path.join("src", "frontend", "templates"), static_folder=os.path.join("src", "frontend", "static"))
+
+# Initialize OpenAI API
+client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
 
 def connect_to_mysql(host, port, user, password, database):
     try:
@@ -82,6 +89,20 @@ def api_parkplaetze():
             return jsonify({"error": "Fehler bei der Verbindung zur Datenbank"}), 500
     else:
         return jsonify({"error": "Fehler beim Lesen der Anmeldeinformationen"}), 500
+
+@app.route('/api/search', methods=['POST'])
+def api_search():
+    data = request.json
+    prompt = data.get('prompt')
+    if not prompt:
+        return jsonify({"error": "Kein Suchbegriff angegeben"}), 400
+
+    try:
+        analysis = perform_search(prompt)
+        return jsonify({"analysis": analysis})
+    except Exception as e:
+        print("Fehler bei der Verarbeitung der Suchanfrage:", e)
+        return jsonify({"error": "Fehler bei der Verarbeitung der Suchanfrage"}), 500
 
 @app.route('/karte')
 def karte():
