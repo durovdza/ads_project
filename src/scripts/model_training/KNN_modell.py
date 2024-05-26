@@ -146,11 +146,11 @@ def display_on_map(user_location, nearest_parkings, strassenparkplatz_data, park
                           popup=popup_text,
                           icon=folium.Icon(color='green', icon='info-sign')).add_to(marker_cluster)
 
-    m.save('src/scripts/model_training/nearest_parkings_map.html')
+    m.save(r'C:\Users\smaie\ads_project\src\scripts\model_training\KNN_map.html')
     print("Map saved as nearest_parkings_map.html")
 
 def process_address(adresse):
-    mysql_credentials_file = os.path.join("config", "config_mysql_credentials.json")
+    mysql_credentials_file = r'C:\Users\smaie\ads_project\config\config_mysql_credentials.json'
     host, port, user, password, database = read_mysql_credentials(mysql_credentials_file)
     connection = connect_to_mysql(host, port, user, password, database)
     
@@ -164,13 +164,10 @@ def process_address(adresse):
     else:
         print("Verbindung zur Datenbank fehlgeschlagen")
 
-def main():
-    with open(os.path.join("src", "scripts", "model_training", "data.json"), 'r') as f:
+def KNN_map():
+    with open(r'C:\Users\smaie\ads_project\src\scripts\model_training\data.json') as f:
         data = json.load(f)
     print(f"Gelesene Daten aus data.json: {data}")  # Debugging-Ausgabe hinzufügen
     adresse = data['adresse']
     
     process_address(adresse)
-
-if __name__ == '__main__':
-    main()

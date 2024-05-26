@@ -8,6 +8,10 @@ from openai import OpenAI
 import sys
 sys.path.append(r'C:\Users\smaie\ads_project\src\scripts\data_understanding')
 from data_understanding_nlp_openai import perform_search
+sys.path.append(r'C:\Users\smaie\ads_project\src\scripts\model_training')
+from KNN_modell import KNN_map
+sys.path.append(r'C:\Users\smaie\ads_project\src\scripts\data_understanding')
+from data_understanding_map import map_generating
 
 app = Flask(__name__, template_folder=os.path.join("src", "frontend", "templates"), static_folder=os.path.join("src", "frontend", "static"))
 
@@ -106,14 +110,16 @@ def api_search():
 
 @app.route('/karte')
 def karte():
+    map_generating
     try:
-        return send_file(os.path.join("src", "scripts", "data_understanding", "map.html"))
+        return send_file(r'C:\Users\smaie\ads_project\src\scripts\data_understanding\map.html')
     except Exception as e:
         print("Fehler beim Senden der Datei:", e)
         return jsonify({"error": "Fehler beim Senden der Datei"}), 500
 
 @app.route('/knn_karte', methods=['POST'])
 def knn_karte():
+    KNN_map()
     data = request.json
     adresse = data.get('adresse')
     if not adresse:
@@ -121,7 +127,7 @@ def knn_karte():
 
     try:
         geo_data = {"adresse": adresse}
-        return send_file(os.path.join("src", "scripts", "model_training", "nearest_parkings_map.html"))
+        return send_file(r'C:\Users\smaie\ads_project\src\scripts\model_training\KNN_map.html')
     except Exception as e:
         print("Fehler beim Senden der KNN-Karte:", e)
         return jsonify({"error": "Fehler beim Senden der KNN-Karte"}), 500
